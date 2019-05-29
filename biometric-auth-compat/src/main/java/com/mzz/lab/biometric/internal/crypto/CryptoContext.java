@@ -39,6 +39,10 @@ public class CryptoContext {
 
     }
 
+    public Cipher getCipher() {
+        return cipher;
+    }
+
 
     @TargetApi(Build.VERSION_CODES.M)
     private void generateKey(String keyName) {

@@ -11,6 +11,7 @@ import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 import android.support.v4.os.CancellationSignal;
 
 import com.mzz.lab.biometric.internal.BiometricResultFactory;
+import com.mzz.lab.biometric.internal.CancellationDelegate;
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
@@ -236,21 +237,9 @@ public abstract class BiometricManagerV23 {
 
 
 
-    public abstract static class CancellationDelegate<T>{
-        protected final T cancellationSignal;
-
-        public CancellationDelegate(T cancellationSignal) { this.cancellationSignal = cancellationSignal; }
-
-        public T get(){
-            return cancellationSignal;
-        }
-
-        public abstract void cancel();
-        public abstract boolean isCanceled();
-    }
 
 
-    protected static class CancellationDelegateLegacy extends CancellationDelegate<android.os.CancellationSignal>{
+    protected static class CancellationDelegateLegacy extends CancellationDelegate<android.os.CancellationSignal> {
         public CancellationDelegateLegacy() {
             super(new android.os.CancellationSignal());
         }
