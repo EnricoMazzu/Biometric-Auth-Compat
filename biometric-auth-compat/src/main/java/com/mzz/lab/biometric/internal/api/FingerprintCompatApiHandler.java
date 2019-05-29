@@ -5,14 +5,12 @@ import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 import android.support.v4.os.CancellationSignal;
 
 import com.mzz.lab.biometric.BiometricCallback;
-import com.mzz.lab.biometric.BiometricManagerV23;
 import com.mzz.lab.biometric.R;
 import com.mzz.lab.biometric.internal.BiometricResultFactory;
 import com.mzz.lab.biometric.internal.CancellationDelegate;
 import com.mzz.lab.biometric.internal.crypto.CryptoContext;
 
 public class FingerprintCompatApiHandler extends FingerprintApiHandler {
-
 
     @Override
     protected void init(BiometricCallback biometricCallback) {

@@ -18,8 +18,6 @@ public class FingerprintApiHandler extends AbstractApiHandler {
 
     private BiometricDialogV23 biometricDialogV23;
 
-    private static final String KEY_NAME = UUID.randomUUID().toString();
-
     public FingerprintApiHandler() {
     }
 
@@ -81,13 +79,6 @@ public class FingerprintApiHandler extends AbstractApiHandler {
         displayBiometricDialog();
     }
 
-    protected CryptoContext getCryptoContext() {
-        try {
-            return new CryptoContext(KEY_NAME);
-        } catch (CryptoContextInitException e) {
-            return null;
-        }
-    }
 
     protected void displayBiometricDialog() {
         biometricDialogV23 = new BiometricDialogV23(context,cancellationDelegate);
