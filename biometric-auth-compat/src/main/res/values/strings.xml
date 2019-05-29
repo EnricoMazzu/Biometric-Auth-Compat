@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">biometric</string>
+    <string name="biometric_failed">Fingerprint not recognized</string>
+</resources>
