@@ -1,28 +1,23 @@
 package com.mzz.lab.biometric;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.hardware.biometrics.BiometricPrompt;
-import android.os.Build;
-import android.os.CancellationSignal;
 import android.support.annotation.NonNull;
 
-import com.mzz.lab.biometric.internal.BiometricCallbackV28;
+import com.mzz.lab.biometric.internal.api.AbstractApiHandler;
+import com.mzz.lab.biometric.internal.api.BiometricApiHandler;
+import com.mzz.lab.biometric.internal.api.FingerprintCompatApiHandler;
 
-public class BiometricManager extends BiometricManagerV23 {
+public class BiometricManager {
 
+    private final BiometricBuilder biometricBuilder;
+    private AbstractApiHandler apiHandler;
 
     protected BiometricManager(final BiometricBuilder biometricBuilder) {
-        this.context = biometricBuilder.context;
-        this.title = biometricBuilder.title;
-        this.subtitle = biometricBuilder.subtitle;
-        this.description = biometricBuilder.description;
-        this.negativeButtonText = biometricBuilder.negativeButtonText;
+        this.biometricBuilder = biometricBuilder;
     }
 
 
-    public void authenticate(@NonNull final BiometricCallback biometricCallback) {
+    public void authenticate(Context context,@NonNull final BiometricCallback biometricCallback) {
         if(!BiometricUtils.isSdkVersionSupported()) {
             biometricCallback.onSdkVersionNotSupported();
             return;
@@ -43,27 +38,47 @@ public class BiometricManager extends BiometricManagerV23 {
             return;
         }
 
-        displayBiometricDialog(biometricCallback);
+        //displayBiometricDialog(biometricCallback);
+        authenticateWithApiHandler(context,biometricCallback);
+
     }
 
     public void cancelAuthentication(){
-        if(!cancellationDelegate.isCanceled()){
-            cancellationDelegate.cancel();
+        if(apiHandler != null){
+            apiHandler.cancelAuthentication();
         }
     }
 
 
 
-    private void displayBiometricDialog(BiometricCallback biometricCallback) {
-        if(BiometricUtils.isBiometricPromptEnabled()) {
+    private void authenticateWithApiHandler(Context context,BiometricCallback biometricCallback) {
+        /*if(BiometricUtils.isBiometricPromptEnabled()) {
             displayBiometricPrompt(biometricCallback);
         } else {
             displayBiometricPromptV23(biometricCallback);
+        }*/
+        this.apiHandler = createApiHandler();
+        this.apiHandler.authenticate(context,biometricCallback);
+    }
+
+    private AbstractApiHandler createApiHandler() {
+        AbstractApiHandler abstractApiHandler;
+        if(BiometricUtils.isBiometricPromptEnabled()){
+            abstractApiHandler = new BiometricApiHandler();
+        }else{
+            abstractApiHandler = new FingerprintCompatApiHandler();
         }
+
+        abstractApiHandler.setTitle(biometricBuilder.title);
+        abstractApiHandler.setSubtitle(biometricBuilder.subtitle);
+        abstractApiHandler.setDescription(biometricBuilder.description);
+        abstractApiHandler.setNegativeButtonText(biometricBuilder.negativeButtonText);
+
+        return abstractApiHandler;
     }
 
 
-
+    /*
     @TargetApi(Build.VERSION_CODES.P)
     private void displayBiometricPrompt(final BiometricCallback biometricCallback) {
         this.cancellationDelegate = new CancellationDelegateLegacy();
@@ -82,6 +97,7 @@ public class BiometricManager extends BiometricManagerV23 {
                 .authenticate((CancellationSignal) cancellationDelegate.get(), context.getMainExecutor(),
                         new BiometricCallbackV28(biometricCallback));
     }
+    */
 
 
     public static class BiometricBuilder {
@@ -91,9 +107,8 @@ public class BiometricManager extends BiometricManagerV23 {
         private String description;
         private String negativeButtonText;
 
-        private Context context;
-        public BiometricBuilder(Context context) {
-            this.context = context;
+        public BiometricBuilder() {
+
         }
 
         public BiometricBuilder setTitle(@NonNull final String title) {

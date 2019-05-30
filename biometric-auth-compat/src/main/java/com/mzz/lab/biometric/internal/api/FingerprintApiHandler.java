@@ -6,13 +6,13 @@ import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 
 import com.mzz.lab.biometric.BiometricCallback;
-import com.mzz.lab.biometric.BiometricDialogV23;
+import com.mzz.lab.biometric.internal.ui.BiometricDialogV23;
 import com.mzz.lab.biometric.R;
 import com.mzz.lab.biometric.internal.BiometricResultFactory;
 import com.mzz.lab.biometric.internal.crypto.CryptoContext;
-import com.mzz.lab.biometric.internal.crypto.CryptoContextInitException;
+import com.mzz.lab.biometric.models.BiometricAuthenticationResult;
 
-import java.util.UUID;
+import java.lang.ref.WeakReference;
 
 public class FingerprintApiHandler extends AbstractApiHandler {
 
@@ -22,13 +22,13 @@ public class FingerprintApiHandler extends AbstractApiHandler {
     }
 
     @Override
-    protected void init(BiometricCallback biometricCallback) {
-        setupWithLegacy(biometricCallback);
+    protected void init(Context context, BiometricCallback biometricCallback) {
+        setupWithLegacy(context,biometricCallback);
 
     }
 
     @TargetApi(Build.VERSION_CODES.M)
-    protected void setupWithLegacy(final BiometricCallback biometricCallback) {
+    protected void setupWithLegacy(Context context, final BiometricCallback biometricCallback) {
         cancellationDelegate = new CancellationDelegateLegacy();
         //FingerprintManager.CryptoObject cryptoObject = new FingerprintManager.CryptoObject(cipher);
         CryptoContext cryptoContext = getCryptoContext();
@@ -43,44 +43,67 @@ public class FingerprintApiHandler extends AbstractApiHandler {
             return;
         }
 
+        final WeakReference<Context> contextWeakReference = new WeakReference<>(context);
+
         fingerprintManager.authenticate(new FingerprintManager.CryptoObject(cryptoContext.getCipher()), (android.os.CancellationSignal) cancellationDelegate.get(), 0, new FingerprintManager.AuthenticationCallback() {
             @Override
             public void onAuthenticationError(int errorCode, CharSequence errString) {
                 super.onAuthenticationError(errorCode, errString);
-                updateStatus(String.valueOf(errString));
-                if(errorCode == FingerprintManager.FINGERPRINT_ERROR_CANCELED){
-                    biometricCallback.onAuthenticationCancelled();
-                }else{
-                    biometricCallback.onAuthenticationError(errorCode, errString);
-                }
+                handleOnAuthenticationError(errorCode, errString, biometricCallback);
             }
 
             @Override
             public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
                 super.onAuthenticationHelp(helpCode, helpString);
-                updateStatus(String.valueOf(helpString));
-                biometricCallback.onAuthenticationHelp(helpCode, helpString);
+                handleOnAuthenticationHelp(helpCode, helpString, biometricCallback);
             }
 
             @Override
             public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
                 super.onAuthenticationSucceeded(result);
-                dismissDialog();
-                biometricCallback.onAuthenticationSuccessful(BiometricResultFactory.from(result));
+                handleOnAuthenticationSucceeded(BiometricResultFactory.from(result), biometricCallback);
             }
 
             @Override
             public void onAuthenticationFailed() {
-                updateStatus(context.getString(R.string.biometric_failed));
-                biometricCallback.onAuthenticationFailed();
+                Context context = contextWeakReference.get();
+                handleOnAuthenticationFailed(context, biometricCallback);
             }
         },null);
 
-        displayBiometricDialog();
+        displayBiometricDialog(context);
+    }
+
+    protected void handleOnAuthenticationError(int errorCode, CharSequence errString, BiometricCallback biometricCallback) {
+        updateStatus(String.valueOf(errString));
+        if(errorCode == FingerprintManager.FINGERPRINT_ERROR_CANCELED){
+            biometricCallback.onAuthenticationCancelled();
+        }else{
+            biometricCallback.onAuthenticationError(errorCode, errString);
+        }
+    }
+
+    protected void handleOnAuthenticationHelp(int helpCode, CharSequence helpString, BiometricCallback biometricCallback) {
+        updateStatus(String.valueOf(helpString));
+        biometricCallback.onAuthenticationHelp(helpCode, helpString);
     }
 
 
-    protected void displayBiometricDialog() {
+    protected void handleOnAuthenticationSucceeded(BiometricAuthenticationResult result, BiometricCallback biometricCallback) {
+        dismissDialog();
+        biometricCallback.onAuthenticationSuccessful(result);
+    }
+
+    protected void handleOnAuthenticationFailed(Context context, BiometricCallback biometricCallback) {
+        if(context != null){
+            updateStatus(context.getString(R.string.biometric_failed));
+        }
+        biometricCallback.onAuthenticationFailed();
+    }
+
+
+
+    protected void displayBiometricDialog(Context context) {
         biometricDialogV23 = new BiometricDialogV23(context,cancellationDelegate);
         biometricDialogV23.setTitle(title);
         //biometricDialogV23.setSubtitle(subtitle);

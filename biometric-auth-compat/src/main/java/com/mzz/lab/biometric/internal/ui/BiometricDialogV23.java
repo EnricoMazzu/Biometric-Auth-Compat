@@ -1,4 +1,4 @@
-package com.mzz.lab.biometric;
+package com.mzz.lab.biometric.internal.ui;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,29 +8,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.mzz.lab.biometric.R;
 import com.mzz.lab.biometric.internal.CancellationDelegate;
 
 public class BiometricDialogV23 extends BottomSheetDialog implements View.OnClickListener {
 
     private final CancellationDelegate cancellationDelegate;
-    //private Context context;
 
     private Button btnCancel;
-    //private ImageView imgLogo;
     private TextView itemTitle, itemDescription, /*itemSubtitle,*/ itemStatus;
 
 
     public BiometricDialogV23(@NonNull Context context, final CancellationDelegate cancellationDelegate) {
         super(context, R.style.BottomSheetDialogTheme);
-        //this.context = context.getApplicationContext();
         this.cancellationDelegate = cancellationDelegate;
         setDialogView();
-        setOnDismissListener(new OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                cancellationDelegate.cancel();
-            }
-        });
+        setOnDismissListener(new OnDismissWithCancellationImpl(cancellationDelegate));
     }
 
     private void setDialogView() {
@@ -40,13 +33,10 @@ public class BiometricDialogV23 extends BottomSheetDialog implements View.OnClic
         btnCancel = findViewById(R.id.btn_cancel);
         btnCancel.setOnClickListener(this);
 
-        //imgLogo = findViewById(R.id.img_logo);
         itemTitle = findViewById(R.id.item_title);
         itemStatus = findViewById(R.id.item_status);
-        //itemSubtitle = findViewById(R.id.item_subtitle);
         itemDescription = findViewById(R.id.item_description);
 
-        //updateLogo();
     }
 
     public void setTitle(String title) {
@@ -69,19 +59,24 @@ public class BiometricDialogV23 extends BottomSheetDialog implements View.OnClic
         btnCancel.setText(negativeButtonText);
     }
 
-    /*private void updateLogo() {
-        try {
-            Drawable drawable = getContext().getPackageManager().getApplicationIcon(context.getPackageName());
-            imgLogo.setImageDrawable(drawable);
-        } catch (Exception e) {
-            Log.e("BiometricDialogV23",e.getMessage(),e);
-        }
-    }*/
-
-
     @Override
     public void onClick(View view) {
         dismiss();
         cancellationDelegate.cancel();
+    }
+
+
+
+    private static class OnDismissWithCancellationImpl implements OnDismissListener{
+        private CancellationDelegate<?> cancellationDelegate;
+
+        public OnDismissWithCancellationImpl(CancellationDelegate<?> cancellationDelegate) {
+            this.cancellationDelegate = cancellationDelegate;
+        }
+
+        @Override
+        public void onDismiss(DialogInterface dialog) {
+            cancellationDelegate.cancel();
+        }
     }
 }

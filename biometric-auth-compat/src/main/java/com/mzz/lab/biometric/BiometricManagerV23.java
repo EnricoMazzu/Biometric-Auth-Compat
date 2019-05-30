@@ -12,6 +12,7 @@ import android.support.v4.os.CancellationSignal;
 
 import com.mzz.lab.biometric.internal.BiometricResultFactory;
 import com.mzz.lab.biometric.internal.CancellationDelegate;
+import com.mzz.lab.biometric.internal.ui.BiometricDialogV23;
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;

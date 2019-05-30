@@ -8,6 +8,7 @@ import com.mzz.lab.biometric.internal.CancellationDelegate;
 import com.mzz.lab.biometric.internal.crypto.CryptoContext;
 import com.mzz.lab.biometric.internal.crypto.CryptoContextInitException;
 
+import java.lang.ref.WeakReference;
 import java.util.UUID;
 
 public abstract class AbstractApiHandler {
@@ -17,8 +18,6 @@ public abstract class AbstractApiHandler {
     protected String subtitle;
     protected String description;
     protected String negativeButtonText;
-
-    protected Context context;
 
     protected CancellationDelegate cancellationDelegate;
 
@@ -58,15 +57,20 @@ public abstract class AbstractApiHandler {
         this.negativeButtonText = negativeButtonText;
     }
 
-    public Context getContext() {
-        return context;
+    public void cancelAuthentication(){
+        if(!cancellationDelegate.isCanceled()){
+            cancellationDelegate.cancel();
+        }
     }
 
-    public void setContext(Context context) {
-        this.context = context;
+
+    protected abstract void init(Context context, BiometricCallback biometricCallback);
+
+
+    public void authenticate(Context context,BiometricCallback biometricCallback){
+        init(context,biometricCallback);
     }
 
-    protected abstract void init(BiometricCallback biometricCallback);
 
     protected CryptoContext getCryptoContext() {
         try {

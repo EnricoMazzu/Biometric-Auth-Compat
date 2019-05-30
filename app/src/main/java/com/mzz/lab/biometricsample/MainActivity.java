@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void authenticate() {
-        BiometricManager manager = new BiometricManager.BiometricBuilder(this)
+        BiometricManager manager = new BiometricManager.BiometricBuilder()
                 .setTitle("Verification")
                 .setSubtitle("")
                 .setDescription("Confirm your identity to pay")
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
         txtStatus.setText("OnAuthenticationPending");
 
-        manager.authenticate(new BiometricCallback() {
+        manager.authenticate(this,new BiometricCallback() {
             @Override
             public void onSdkVersionNotSupported() {
                 txtStatus.setText("onSdkVersionNotSupported");

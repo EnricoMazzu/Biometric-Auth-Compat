@@ -1,26 +1,26 @@
 package com.mzz.lab.biometric.internal.api;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.hardware.biometrics.BiometricPrompt;
 import android.os.Build;
 import android.os.CancellationSignal;
 
 import com.mzz.lab.biometric.BiometricCallback;
-import com.mzz.lab.biometric.BiometricManagerV23;
 import com.mzz.lab.biometric.internal.BiometricCallbackV28;
 import com.mzz.lab.biometric.internal.crypto.CryptoContext;
 
 public class BiometricApiHandler extends AbstractApiHandler {
 
     @Override
-    protected void init(BiometricCallback biometricCallback) {
-        displayBiometricPrompt(biometricCallback);
+    protected void init(Context context, BiometricCallback biometricCallback) {
+        displayBiometricPrompt(context,biometricCallback);
     }
 
 
     @TargetApi(Build.VERSION_CODES.P)
-    private void displayBiometricPrompt(final BiometricCallback biometricCallback) {
+    private void displayBiometricPrompt(Context context, final BiometricCallback biometricCallback) {
         this.cancellationDelegate = new CancellationDelegateLegacy();
         CryptoContext cryptoContext = getCryptoContext();
         if(cryptoContext == null){
