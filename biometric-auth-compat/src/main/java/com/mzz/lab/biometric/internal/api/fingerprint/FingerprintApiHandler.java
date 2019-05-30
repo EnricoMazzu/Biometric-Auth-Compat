@@ -1,4 +1,4 @@
-package com.mzz.lab.biometric.internal.api;
+package com.mzz.lab.biometric.internal.api.fingerprint;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -6,6 +6,7 @@ import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 
 import com.mzz.lab.biometric.BiometricCallback;
+import com.mzz.lab.biometric.internal.api.AbstractApiHandler;
 import com.mzz.lab.biometric.internal.ui.BiometricDialogV23;
 import com.mzz.lab.biometric.R;
 import com.mzz.lab.biometric.internal.BiometricResultFactory;

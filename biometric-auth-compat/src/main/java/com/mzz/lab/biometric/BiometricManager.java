@@ -4,8 +4,8 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.mzz.lab.biometric.internal.api.AbstractApiHandler;
-import com.mzz.lab.biometric.internal.api.BiometricApiHandler;
-import com.mzz.lab.biometric.internal.api.FingerprintCompatApiHandler;
+import com.mzz.lab.biometric.internal.api.biometricV28.BiometricApiHandler;
+import com.mzz.lab.biometric.internal.api.fingerprint.FingerprintCompatApiHandler;
 
 public class BiometricManager {
 
