@@ -1,5 +1,6 @@
 package com.mzz.lab.biometric;
 
+import com.mzz.lab.biometric.internal.crypto.CryptoContextInitException;
 import com.mzz.lab.biometric.models.BiometricAuthenticationResult;
 
 public interface BiometricCallback {
@@ -12,7 +13,7 @@ public interface BiometricCallback {
 
     void onBiometricAuthenticationPermissionNotGranted();
 
-    void onBiometricAuthenticationInternalError(String error);
+    void onBiometricAuthenticationInternalError(CryptoContextInitException error);
 
     void onAuthenticationFailed();
 

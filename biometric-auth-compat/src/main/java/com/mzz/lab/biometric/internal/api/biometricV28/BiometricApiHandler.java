@@ -6,31 +6,28 @@ import android.content.DialogInterface;
 import android.hardware.biometrics.BiometricPrompt;
 import android.os.Build;
 import android.os.CancellationSignal;
+import android.support.annotation.Nullable;
 
 import com.mzz.lab.biometric.BiometricCallback;
 import com.mzz.lab.biometric.internal.BiometricCallbackV28;
 import com.mzz.lab.biometric.internal.api.AbstractApiHandler;
 import com.mzz.lab.biometric.internal.crypto.CryptoContext;
+import com.mzz.lab.biometric.internal.crypto.CryptoContextInitException;
 
 public class BiometricApiHandler extends AbstractApiHandler {
 
     @Override
-    protected void init(Context context, BiometricCallback biometricCallback) {
+    protected void init(Context context, BiometricCallback biometricCallback) throws CryptoContextInitException {
         displayBiometricPrompt(context,biometricCallback);
     }
 
 
     @TargetApi(Build.VERSION_CODES.P)
-    private void displayBiometricPrompt(Context context, final BiometricCallback biometricCallback) {
+    private void displayBiometricPrompt(Context context, final BiometricCallback biometricCallback) throws CryptoContextInitException {
         this.cancellationDelegate = new CancellationDelegateLegacy();
         CryptoContext cryptoContext = getCryptoContext();
-        if(cryptoContext == null){
-            //TODO send specific error;
-            biometricCallback.onBiometricAuthenticationInternalError("invalid crypto context");
-            return;
-        }
-        BiometricPrompt.CryptoObject cryptoObject = new BiometricPrompt.CryptoObject(cryptoContext.getCipher());
-        new BiometricPrompt.Builder(context)
+        BiometricPrompt.CryptoObject cryptoObject = toCryptoObject(cryptoContext);
+        BiometricPrompt prompt = new BiometricPrompt.Builder(context)
                 .setTitle(title)
                 .setSubtitle(subtitle)
                 .setDescription(description)
@@ -40,8 +37,24 @@ public class BiometricApiHandler extends AbstractApiHandler {
                         biometricCallback.onAuthenticationCancelled();
                     }
                 })
-                .build()
-                .authenticate(cryptoObject,(CancellationSignal) cancellationDelegate.get(), context.getMainExecutor(),
-                        new BiometricCallbackV28(biometricCallback));
+                .build();
+
+        if(cryptoObject != null){
+            prompt.authenticate(cryptoObject,(CancellationSignal) cancellationDelegate.get(), context.getMainExecutor(),
+                    new BiometricCallbackV28(biometricCallback));
+        }else{
+            prompt.authenticate((CancellationSignal) cancellationDelegate.get(), context.getMainExecutor(),
+                    new BiometricCallbackV28(biometricCallback));
+        }
+
+    }
+
+    @TargetApi(Build.VERSION_CODES.P)
+    @Nullable
+    private BiometricPrompt.CryptoObject toCryptoObject(CryptoContext cryptoContext) {
+        if(cryptoContext == null){
+            return null;
+        }
+        return new BiometricPrompt.CryptoObject(cryptoContext.getCipher());
     }
 }

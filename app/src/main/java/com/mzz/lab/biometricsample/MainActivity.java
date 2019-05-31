@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.mzz.lab.biometric.BiometricCallback;
 import com.mzz.lab.biometric.BiometricManager;
+import com.mzz.lab.biometric.internal.crypto.CryptoContextInitException;
 import com.mzz.lab.biometric.models.BiometricAuthenticationResult;
 
 public class MainActivity extends AppCompatActivity {
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onBiometricAuthenticationInternalError(String error) {
+            public void onBiometricAuthenticationInternalError(CryptoContextInitException error) {
                 txtStatus.setText("onBiometricAuthenticationInternalError");
             }
 

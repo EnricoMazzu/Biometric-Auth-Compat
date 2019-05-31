@@ -4,9 +4,11 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
+import android.support.annotation.Nullable;
 
 import com.mzz.lab.biometric.BiometricCallback;
 import com.mzz.lab.biometric.internal.api.AbstractApiHandler;
+import com.mzz.lab.biometric.internal.crypto.CryptoContextInitException;
 import com.mzz.lab.biometric.internal.ui.BiometricView;
 import com.mzz.lab.biometric.R;
 import com.mzz.lab.biometric.internal.BiometricResultFactory;
@@ -23,29 +25,25 @@ public class FingerprintApiHandler extends AbstractApiHandler {
     }
 
     @Override
-    protected void init(Context context, BiometricCallback biometricCallback) {
+    protected void init(Context context, BiometricCallback biometricCallback) throws CryptoContextInitException {
         setupWithLegacy(context,biometricCallback);
 
     }
 
     @TargetApi(Build.VERSION_CODES.M)
-    protected void setupWithLegacy(Context context, final BiometricCallback biometricCallback) {
+    protected void setupWithLegacy(Context context, final BiometricCallback biometricCallback) throws CryptoContextInitException {
         cancellationDelegate = new CancellationDelegateLegacy();
         CryptoContext cryptoContext = getCryptoContext();
-        if(cryptoContext == null){
-            //TODO send specific error;
-            biometricCallback.onBiometricAuthenticationInternalError("invalid crypto context");
-            return;
-        }
         FingerprintManager fingerprintManager = (FingerprintManager) context.getSystemService(Context.FINGERPRINT_SERVICE);
         if(fingerprintManager == null){
-            biometricCallback.onBiometricAuthenticationInternalError("FingerprintManager is null");
+            //TODO review this
+            biometricCallback.onBiometricAuthenticationInternalError(null);
             return;
         }
 
         final WeakReference<Context> contextWeakReference = new WeakReference<>(context);
-
-        fingerprintManager.authenticate(new FingerprintManager.CryptoObject(cryptoContext.getCipher()), (android.os.CancellationSignal) cancellationDelegate.get(), 0, new FingerprintManager.AuthenticationCallback() {
+        FingerprintManager.CryptoObject cryptoObject = toCryptoObject(cryptoContext);
+        fingerprintManager.authenticate(cryptoObject, (android.os.CancellationSignal) cancellationDelegate.get(), 0, new FingerprintManager.AuthenticationCallback() {
             @Override
             public void onAuthenticationError(int errorCode, CharSequence errString) {
                 super.onAuthenticationError(errorCode, errString);
@@ -72,6 +70,15 @@ public class FingerprintApiHandler extends AbstractApiHandler {
         },null);
 
         displayBiometricDialog(context);
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    @Nullable
+    private FingerprintManager.CryptoObject toCryptoObject(CryptoContext cryptoContext) {
+        if(cryptoContext == null){
+            return null;
+        }
+        return new FingerprintManager.CryptoObject(cryptoContext.getCipher());
     }
 
     protected void handleOnAuthenticationError(int errorCode, CharSequence errString, BiometricCallback biometricCallback) {

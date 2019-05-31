@@ -1,7 +1,6 @@
 package com.mzz.lab.biometric.internal.crypto;
 
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.os.Build;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
@@ -22,7 +21,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
-public class CryptoContext {
+public class CryptoContext{
 
     private Cipher cipher;
     private KeyStore keyStore;
@@ -32,7 +31,11 @@ public class CryptoContext {
     public CryptoContext(String keyName) throws CryptoContextInitException {
         try {
             generateKey(keyName);
-            initCipher(keyName);
+            boolean invalidated = initCipher(keyName);
+            if(invalidated){
+                throw new InvalidatedKeyException();
+            }
+
         }catch (RuntimeException ex){
             throw new CryptoContextInitException(ex.getCause());
         }
@@ -92,7 +95,6 @@ public class CryptoContext {
                     null);
             cipher.init(Cipher.ENCRYPT_MODE, key);
             return true;
-
 
         } catch (KeyPermanentlyInvalidatedException e) {
             return false;

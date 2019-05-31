@@ -2,6 +2,7 @@ package com.mzz.lab.biometric.internal.api.fingerprint;
 
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 import android.support.v4.os.CancellationSignal;
 
@@ -9,13 +10,14 @@ import com.mzz.lab.biometric.BiometricCallback;
 import com.mzz.lab.biometric.internal.BiometricResultFactory;
 import com.mzz.lab.biometric.internal.CancellationDelegate;
 import com.mzz.lab.biometric.internal.crypto.CryptoContext;
+import com.mzz.lab.biometric.internal.crypto.CryptoContextInitException;
 
 import java.lang.ref.WeakReference;
 
 public class FingerprintCompatApiHandler extends FingerprintApiHandler {
 
     @Override
-    protected void init(Context context, BiometricCallback biometricCallback) {
+    protected void init(Context context, BiometricCallback biometricCallback) throws CryptoContextInitException {
         if(useCompat()){
             setupWithCompat(context,biometricCallback);
         }else{
@@ -29,17 +31,11 @@ public class FingerprintCompatApiHandler extends FingerprintApiHandler {
     }
 
 
-    private void setupWithCompat(Context context, final BiometricCallback biometricCallback) {
+    private void setupWithCompat(Context context, final BiometricCallback biometricCallback) throws CryptoContextInitException {
         cancellationDelegate = new CancellationDelegateCompat();
         CryptoContext cryptoContext = getCryptoContext();
-        if(cryptoContext == null){
-            //TODO send specific error;
-            biometricCallback.onBiometricAuthenticationInternalError("invalid crypto context");
-            return;
-        }
-        FingerprintManagerCompat.CryptoObject cryptoObject = new FingerprintManagerCompat.CryptoObject(cryptoContext.getCipher());
+        FingerprintManagerCompat.CryptoObject cryptoObject = toCryptoObject(cryptoContext);
         FingerprintManagerCompat fingerprintManagerCompat = FingerprintManagerCompat.from(context);
-
 
         final WeakReference<Context> contextWeakReference = new WeakReference<>(context);
 
@@ -73,6 +69,14 @@ public class FingerprintCompatApiHandler extends FingerprintApiHandler {
                 }, null);
 
         displayBiometricDialog(context);
+    }
+
+    @Nullable
+    private FingerprintManagerCompat.CryptoObject toCryptoObject(CryptoContext cryptoContext) {
+        if(cryptoContext == null){
+            return null;
+        }
+        return new FingerprintManagerCompat.CryptoObject(cryptoContext.getCipher());
     }
 
 

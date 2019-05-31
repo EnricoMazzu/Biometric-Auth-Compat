@@ -70,30 +70,6 @@ public class BiometricManager {
         return abstractApiHandler;
     }
 
-
-
-    /*
-    @TargetApi(Build.VERSION_CODES.P)
-    private void displayBiometricPrompt(final BiometricCallback biometricCallback) {
-        this.cancellationDelegate = new CancellationDelegateLegacy();
-
-        new BiometricPrompt.Builder(context)
-                .setTitle(title)
-                .setSubtitle(subtitle)
-                .setDescription(description)
-                .setNegativeButton(negativeButtonText, context.getMainExecutor(), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        biometricCallback.onAuthenticationCancelled();
-                    }
-                })
-                .build()
-                .authenticate((CancellationSignal) cancellationDelegate.get(), context.getMainExecutor(),
-                        new BiometricCallbackV28(biometricCallback));
-    }
-    */
-
-
     public static class BiometricBuilder {
 
         private String title;
