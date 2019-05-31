@@ -52,30 +52,24 @@ public class BiometricManager {
 
 
     private void authenticateWithApiHandler(Context context,BiometricCallback biometricCallback) {
-        /*if(BiometricUtils.isBiometricPromptEnabled()) {
-            displayBiometricPrompt(biometricCallback);
-        } else {
-            displayBiometricPromptV23(biometricCallback);
-        }*/
-        this.apiHandler = createApiHandler();
+        this.apiHandler = createAndSetupApiHandler();
         this.apiHandler.authenticate(context,biometricCallback);
     }
 
-    private AbstractApiHandler createApiHandler() {
+    private AbstractApiHandler createAndSetupApiHandler() {
         AbstractApiHandler abstractApiHandler;
         if(BiometricUtils.isBiometricPromptEnabled()){
             abstractApiHandler = new BiometricApiHandler();
         }else{
             abstractApiHandler = new FingerprintCompatApiHandler();
         }
-
         abstractApiHandler.setTitle(biometricBuilder.title);
         abstractApiHandler.setSubtitle(biometricBuilder.subtitle);
         abstractApiHandler.setDescription(biometricBuilder.description);
         abstractApiHandler.setNegativeButtonText(biometricBuilder.negativeButtonText);
-
         return abstractApiHandler;
     }
+
 
 
     /*

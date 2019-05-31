@@ -7,7 +7,7 @@ import android.os.Build;
 
 import com.mzz.lab.biometric.BiometricCallback;
 import com.mzz.lab.biometric.internal.api.AbstractApiHandler;
-import com.mzz.lab.biometric.internal.ui.BiometricDialogV23;
+import com.mzz.lab.biometric.internal.ui.BiometricView;
 import com.mzz.lab.biometric.R;
 import com.mzz.lab.biometric.internal.BiometricResultFactory;
 import com.mzz.lab.biometric.internal.crypto.CryptoContext;
@@ -17,7 +17,7 @@ import java.lang.ref.WeakReference;
 
 public class FingerprintApiHandler extends AbstractApiHandler {
 
-    private BiometricDialogV23 biometricDialogV23;
+    private BiometricView biometricView;
 
     public FingerprintApiHandler() {
     }
@@ -31,7 +31,6 @@ public class FingerprintApiHandler extends AbstractApiHandler {
     @TargetApi(Build.VERSION_CODES.M)
     protected void setupWithLegacy(Context context, final BiometricCallback biometricCallback) {
         cancellationDelegate = new CancellationDelegateLegacy();
-        //FingerprintManager.CryptoObject cryptoObject = new FingerprintManager.CryptoObject(cipher);
         CryptoContext cryptoContext = getCryptoContext();
         if(cryptoContext == null){
             //TODO send specific error;
@@ -105,23 +104,23 @@ public class FingerprintApiHandler extends AbstractApiHandler {
 
 
     protected void displayBiometricDialog(Context context) {
-        biometricDialogV23 = new BiometricDialogV23(context,cancellationDelegate);
-        biometricDialogV23.setTitle(title);
-        //biometricDialogV23.setSubtitle(subtitle);
-        biometricDialogV23.setDescription(description);
-        biometricDialogV23.setButtonText(negativeButtonText);
-        biometricDialogV23.show();
+        biometricView = new BiometricView(context,cancellationDelegate);
+        biometricView.setTitle(title);
+        //biometricView.setSubtitle(subtitle);
+        biometricView.setDescription(description);
+        biometricView.setButtonText(negativeButtonText);
+        biometricView.show();
     }
 
     protected void dismissDialog() {
-        if(biometricDialogV23 != null) {
-            biometricDialogV23.dismiss();
+        if(biometricView != null) {
+            biometricView.dismiss();
         }
     }
 
     protected void updateStatus(String status) {
-        if(biometricDialogV23 != null) {
-            biometricDialogV23.updateStatus(status);
+        if(biometricView != null) {
+            biometricView.updateStatus(status);
         }
     }
 

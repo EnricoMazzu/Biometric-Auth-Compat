@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.mzz.lab.biometric.R;
 import com.mzz.lab.biometric.internal.CancellationDelegate;
 
-public class BiometricDialogV23 extends BottomSheetDialog implements View.OnClickListener {
+public class BiometricView extends BottomSheetDialog implements View.OnClickListener {
 
     private final CancellationDelegate cancellationDelegate;
 
@@ -19,7 +19,7 @@ public class BiometricDialogV23 extends BottomSheetDialog implements View.OnClic
     private TextView itemTitle, itemDescription, /*itemSubtitle,*/ itemStatus;
 
 
-    public BiometricDialogV23(@NonNull Context context, final CancellationDelegate cancellationDelegate) {
+    public BiometricView(@NonNull Context context, final CancellationDelegate cancellationDelegate) {
         super(context, R.style.BottomSheetDialogTheme);
         this.cancellationDelegate = cancellationDelegate;
         setDialogView();
