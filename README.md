@@ -16,4 +16,11 @@ This project want to have the same flexibility and features of androidx.biometri
 
 
 ## Roadmap
+This is a work in progress
+### milestone 0 (wip)
+ - Define dialog view for api from 23 to 27 (with legacy compat library)
+ - Use fingerprint or prompt api, depending on api lever.
+ - Define and manage crypto entities, depending on authentication purpose.
+ - Find a way to simplify the crypto operation and data transport
+### milestone 1
 To be defined
