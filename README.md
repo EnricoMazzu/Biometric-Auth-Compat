@@ -14,6 +14,16 @@ Sounds good... but with androidx.biometric:
 
 This project want to have the same flexibility and features of androidx.biometric, but with support to currently large used compat library (and in the future the possibility to switch to android.x without change your code)
 
+References:
+UI and callback originally inspired by 
+https://github.com/anitaa1990/Biometric-Auth-Sample.
+
+## Getting started
+work in progress
+
+## API
+work in progress
+
 
 ## Roadmap
 This is a work in progress
