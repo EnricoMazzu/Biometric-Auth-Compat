@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onAuthenticationSuccessful(BiometricAuthenticationResult from) {
+            public void onAuthenticationSuccessful(BiometricAuthenticationResult authenticationResult) {
                 txtStatus.setText("onAuthenticationSuccessful");
             }
 

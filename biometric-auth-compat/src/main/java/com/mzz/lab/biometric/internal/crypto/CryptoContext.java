@@ -103,7 +103,7 @@ public class CryptoContext{
                 | UnrecoverableKeyException | IOException
                 | NoSuchAlgorithmException | InvalidKeyException e) {
 
-            throw new RuntimeException("Failed to init Cipher", e);
+            throw new RuntimeException("Failed to startAuthentication Cipher", e);
         }
     }
 }

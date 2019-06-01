@@ -2,10 +2,12 @@ package com.mzz.lab.biometric;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.mzz.lab.biometric.internal.api.AbstractApiHandler;
 import com.mzz.lab.biometric.internal.api.biometricV28.BiometricApiHandler;
 import com.mzz.lab.biometric.internal.api.fingerprint.FingerprintCompatApiHandler;
+import com.mzz.lab.biometric.models.AuthenticationPurpose;
 
 public class BiometricManager {
 
@@ -76,6 +78,7 @@ public class BiometricManager {
         private String subtitle;
         private String description;
         private String negativeButtonText;
+        private AuthenticationPurpose authenticationPurpose;
 
         public BiometricBuilder() {
 
@@ -99,6 +102,11 @@ public class BiometricManager {
 
         public BiometricBuilder setNegativeButtonText(@NonNull final String negativeButtonText) {
             this.negativeButtonText = negativeButtonText;
+            return this;
+        }
+
+        public BiometricBuilder setAuthenticationPurpose(@NonNull AuthenticationPurpose authenticationPurpose) {
+            this.authenticationPurpose = authenticationPurpose;
             return this;
         }
 

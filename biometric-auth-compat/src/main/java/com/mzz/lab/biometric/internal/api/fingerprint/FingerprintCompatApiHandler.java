@@ -17,11 +17,11 @@ import java.lang.ref.WeakReference;
 public class FingerprintCompatApiHandler extends FingerprintApiHandler {
 
     @Override
-    protected void init(Context context, BiometricCallback biometricCallback) throws CryptoContextInitException {
+    protected void startAuthentication(Context context, BiometricCallback biometricCallback) throws CryptoContextInitException {
         if(useCompat()){
             setupWithCompat(context,biometricCallback);
         }else{
-            super.init(context,biometricCallback);
+            super.startAuthentication(context,biometricCallback);
         }
     }
 

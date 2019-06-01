@@ -74,12 +74,12 @@ public abstract class AbstractApiHandler {
     }
 
 
-    protected abstract void init(Context context, BiometricCallback biometricCallback) throws CryptoContextInitException;
+    protected abstract void startAuthentication(Context context, BiometricCallback biometricCallback) throws CryptoContextInitException;
 
 
     public void authenticate(Context context,BiometricCallback biometricCallback){
         try {
-            init(context,biometricCallback);
+            startAuthentication(context,biometricCallback);
         } catch (CryptoContextInitException e) {
             biometricCallback.onBiometricAuthenticationInternalError(e);
         }

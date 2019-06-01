@@ -25,7 +25,7 @@ public class FingerprintApiHandler extends AbstractApiHandler {
     }
 
     @Override
-    protected void init(Context context, BiometricCallback biometricCallback) throws CryptoContextInitException {
+    protected void startAuthentication(Context context, BiometricCallback biometricCallback) throws CryptoContextInitException {
         setupWithLegacy(context,biometricCallback);
 
     }

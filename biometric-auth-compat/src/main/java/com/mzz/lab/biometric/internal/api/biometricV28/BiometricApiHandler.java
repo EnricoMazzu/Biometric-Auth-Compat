@@ -17,7 +17,7 @@ import com.mzz.lab.biometric.internal.crypto.CryptoContextInitException;
 public class BiometricApiHandler extends AbstractApiHandler {
 
     @Override
-    protected void init(Context context, BiometricCallback biometricCallback) throws CryptoContextInitException {
+    protected void startAuthentication(Context context, BiometricCallback biometricCallback) throws CryptoContextInitException {
         displayBiometricPrompt(context,biometricCallback);
     }
 
