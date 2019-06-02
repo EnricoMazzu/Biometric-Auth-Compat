@@ -2,12 +2,12 @@ package com.mzz.lab.biometric;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.mzz.lab.biometric.internal.api.AbstractApiHandler;
 import com.mzz.lab.biometric.internal.api.biometricV28.BiometricApiHandler;
 import com.mzz.lab.biometric.internal.api.fingerprint.FingerprintCompatApiHandler;
 import com.mzz.lab.biometric.models.AuthenticationPurpose;
+import com.mzz.lab.biometric.models.CryptoParams;
 
 public class BiometricManager {
 
@@ -60,16 +60,28 @@ public class BiometricManager {
 
     private AbstractApiHandler createAndSetupApiHandler() {
         AbstractApiHandler abstractApiHandler;
+
         if(BiometricUtils.isBiometricPromptEnabled()){
             abstractApiHandler = new BiometricApiHandler();
         }else{
             abstractApiHandler = new FingerprintCompatApiHandler();
         }
+        setupApiHandler(abstractApiHandler,this.biometricBuilder);
+        return abstractApiHandler;
+    }
+
+    private void setupApiHandler(AbstractApiHandler abstractApiHandler, BiometricBuilder biometricBuilder) {
         abstractApiHandler.setTitle(biometricBuilder.title);
         abstractApiHandler.setSubtitle(biometricBuilder.subtitle);
         abstractApiHandler.setDescription(biometricBuilder.description);
         abstractApiHandler.setNegativeButtonText(biometricBuilder.negativeButtonText);
-        return abstractApiHandler;
+        abstractApiHandler.setAuthenticationPurpose(biometricBuilder.authenticationPurpose);
+        abstractApiHandler.setCryptoParams(biometricBuilder.cryptoParams);
+    }
+
+
+    public static BiometricBuilder newBuilder(){
+        return new BiometricBuilder();
     }
 
     public static class BiometricBuilder {
@@ -79,8 +91,9 @@ public class BiometricManager {
         private String description;
         private String negativeButtonText;
         private AuthenticationPurpose authenticationPurpose;
+        private CryptoParams cryptoParams;
 
-        public BiometricBuilder() {
+        private BiometricBuilder() {
 
         }
 
@@ -110,6 +123,11 @@ public class BiometricManager {
             return this;
         }
 
+        public BiometricBuilder setCryptoParams(CryptoParams cryptoParams) {
+            this.cryptoParams = cryptoParams;
+            return this;
+        }
+
         public BiometricManager build() throws IllegalArgumentException {
             checkParameters();
             return new BiometricManager(this);
@@ -127,6 +145,9 @@ public class BiometricManager {
             }
             if(negativeButtonText == null){
                 throw new IllegalArgumentException("Biometric Dialog negative button text cannot be null");
+            }
+            if(authenticationPurpose == AuthenticationPurpose.ENC_DEC_DATA && cryptoParams == null){
+                throw new IllegalArgumentException("Biometric Dialog crypto params cannot be null when authentication purpose is ENC_DEC_DATA");
             }
         }
     }

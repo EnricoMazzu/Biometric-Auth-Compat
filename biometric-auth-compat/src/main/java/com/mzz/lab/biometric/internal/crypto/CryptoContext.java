@@ -6,6 +6,8 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 
+import com.mzz.lab.biometric.models.CryptoParams;
+
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -28,18 +30,39 @@ public class CryptoContext{
     private KeyGenerator keyGenerator;
 
 
-    public CryptoContext(String keyName) throws CryptoContextInitException {
+    public CryptoContext(CryptoParams cryptoParams) throws CryptoContextInitException {
         try {
-            generateKey(keyName);
+            String keyName = cryptoParams.getKeyName();
+            initKeystore();
+            if(!isKeyPresent(keyName)){
+                generateKey(keyName);
+            }
             boolean invalidated = initCipher(keyName);
             if(invalidated){
+                deleteKeyByAlias(keyName);
                 throw new InvalidatedKeyException();
             }
-
-        }catch (RuntimeException ex){
-            throw new CryptoContextInitException(ex.getCause());
+        }catch (Exception ex){
+            throw new CryptoContextInitException(ex);
         }
 
+    }
+
+    private void deleteKeyByAlias(String keyName) throws KeyStoreException {
+        keyStore.deleteEntry(keyName);
+    }
+
+    private void initKeystore() throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException {
+        keyStore = KeyStore.getInstance("AndroidKeyStore");
+        keyStore.load(null);
+    }
+
+    private boolean isKeyPresent(String keyName) {
+        try {
+            return keyStore.containsAlias(keyName);
+        }catch (Exception ex){
+            return false;
+        }
     }
 
     public Cipher getCipher() {
@@ -50,10 +73,6 @@ public class CryptoContext{
     @TargetApi(Build.VERSION_CODES.M)
     private void generateKey(String keyName) {
         try {
-
-            keyStore = KeyStore.getInstance("AndroidKeyStore");
-            keyStore.load(null);
-
             keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore");
             keyGenerator.init(new
                     KeyGenParameterSpec.Builder(keyName, KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
@@ -64,12 +83,9 @@ public class CryptoContext{
 
             keyGenerator.generateKey();
 
-        } catch (KeyStoreException
-                | NoSuchAlgorithmException
+        } catch (NoSuchAlgorithmException
                 | NoSuchProviderException
-                | InvalidAlgorithmParameterException
-                | CertificateException
-                | IOException exc) {
+                | InvalidAlgorithmParameterException exc) {
            throw new RuntimeException(exc);
         }
     }

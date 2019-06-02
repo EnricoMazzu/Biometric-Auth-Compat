@@ -8,20 +8,19 @@ import com.mzz.lab.biometric.internal.CancellationDelegate;
 import com.mzz.lab.biometric.internal.crypto.CryptoContext;
 import com.mzz.lab.biometric.internal.crypto.CryptoContextInitException;
 import com.mzz.lab.biometric.models.AuthenticationPurpose;
+import com.mzz.lab.biometric.models.CryptoParams;
 
 public abstract class AbstractApiHandler {
 
     //private static final String KEY_NAME = UUID.randomUUID().toString();
-
-    private static final String DEFAULT_KEY_NAME = "__BiometricAuthKey";
 
     protected String title;
     protected String subtitle;
     protected String description;
     protected String negativeButtonText;
     protected AuthenticationPurpose authenticationPurpose = AuthenticationPurpose.NONE;
-
     protected CancellationDelegate cancellationDelegate;
+    protected CryptoParams cryptoParams;
 
     public AbstractApiHandler(){
 
@@ -67,6 +66,14 @@ public abstract class AbstractApiHandler {
         this.authenticationPurpose = authenticationPurpose;
     }
 
+    public CryptoParams getCryptoParams() {
+        return cryptoParams;
+    }
+
+    public void setCryptoParams(CryptoParams cryptoParams) {
+        this.cryptoParams = cryptoParams;
+    }
+
     public void cancelAuthentication(){
         if(!cancellationDelegate.isCanceled()){
             cancellationDelegate.cancel();
@@ -90,7 +97,7 @@ public abstract class AbstractApiHandler {
         if(authenticationPurpose == null || authenticationPurpose == AuthenticationPurpose.NONE){
             return null;
         }
-        return new CryptoContext(DEFAULT_KEY_NAME);
+        return new CryptoContext(cryptoParams);
 
     }
 
