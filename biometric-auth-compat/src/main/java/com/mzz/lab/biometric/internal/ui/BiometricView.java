@@ -11,6 +11,9 @@ import android.widget.TextView;
 import com.mzz.lab.biometric.R;
 import com.mzz.lab.biometric.internal.CancellationDelegate;
 
+/**
+ * TODO evaluate BottomSheetDialogFragment
+ */
 public class BiometricView extends BottomSheetDialog implements View.OnClickListener {
 
     private final CancellationDelegate cancellationDelegate;
