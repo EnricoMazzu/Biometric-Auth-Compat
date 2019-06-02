@@ -39,7 +39,9 @@ public class CryptoContext{
             }
             boolean invalidated = initCipher(keyName);
             if(invalidated){
-                deleteKeyByAlias(keyName);
+                if(cryptoParams.isDeleteAfterInvalidation()){
+                    deleteKeyByAlias(keyName);
+                }
                 throw new InvalidatedKeyException();
             }
         }catch (Exception ex){

@@ -2,8 +2,7 @@ package com.mzz.lab.biometric.models;
 
 public class CryptoParams {
     private String keyName;
-    public boolean deleteAfterInvalidation;
-
+    private boolean deleteAfterInvalidation;
 
     private CryptoParams(Builder builder) {
         this.keyName = builder.keyName;
