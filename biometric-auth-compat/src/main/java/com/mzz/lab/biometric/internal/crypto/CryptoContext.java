@@ -7,6 +7,7 @@ import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 
 import com.mzz.lab.biometric.models.CryptoParams;
+import com.mzz.lab.biometric.models.errors.CryptoContextInitException;
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
@@ -44,7 +45,13 @@ public class CryptoContext{
                 }
                 throw new InvalidatedKeyException();
             }
-        }catch (Exception ex){
+        }
+        catch (CryptoContextInitException ex){
+            //rethrow as is
+            throw ex;
+        }
+        catch (Exception ex){
+            // wrap in CryptoContextInitException
             throw new CryptoContextInitException(ex);
         }
 
@@ -73,7 +80,7 @@ public class CryptoContext{
 
 
     @TargetApi(Build.VERSION_CODES.M)
-    private void generateKey(String keyName) {
+    private void generateKey(String keyName) throws CryptoContextInitException {
         try {
             keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore");
             keyGenerator.init(new
@@ -88,14 +95,14 @@ public class CryptoContext{
         } catch (NoSuchAlgorithmException
                 | NoSuchProviderException
                 | InvalidAlgorithmParameterException exc) {
-           throw new RuntimeException(exc);
+           throw new CryptoContextKeyGenException(exc);
         }
     }
 
 
 
     @TargetApi(Build.VERSION_CODES.M)
-    private boolean initCipher(String keyName) {
+    private boolean initCipher(String keyName) throws CryptoContextInitException {
         try {
             cipher = Cipher.getInstance(
                     KeyProperties.KEY_ALGORITHM_AES + "/"
@@ -121,7 +128,7 @@ public class CryptoContext{
                 | UnrecoverableKeyException | IOException
                 | NoSuchAlgorithmException | InvalidKeyException e) {
 
-            throw new RuntimeException("Failed to startAuthentication Cipher", e);
+            throw new CryptoContextInitException(CryptoContextInitException.INIT_CIPHER_EXCEPTION, e);
         }
     }
 }

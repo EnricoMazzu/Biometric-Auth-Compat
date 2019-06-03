@@ -10,7 +10,7 @@ import com.mzz.lab.biometric.BiometricCallback;
 import com.mzz.lab.biometric.internal.BiometricResultFactory;
 import com.mzz.lab.biometric.internal.CancellationDelegate;
 import com.mzz.lab.biometric.internal.crypto.CryptoContext;
-import com.mzz.lab.biometric.internal.crypto.CryptoContextInitException;
+import com.mzz.lab.biometric.models.errors.CryptoContextInitException;
 
 import java.lang.ref.WeakReference;
 

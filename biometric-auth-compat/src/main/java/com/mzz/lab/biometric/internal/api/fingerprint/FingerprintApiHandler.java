@@ -8,7 +8,7 @@ import android.support.annotation.Nullable;
 
 import com.mzz.lab.biometric.BiometricCallback;
 import com.mzz.lab.biometric.internal.api.AbstractApiHandler;
-import com.mzz.lab.biometric.internal.crypto.CryptoContextInitException;
+import com.mzz.lab.biometric.models.errors.CryptoContextInitException;
 import com.mzz.lab.biometric.internal.ui.BiometricView;
 import com.mzz.lab.biometric.R;
 import com.mzz.lab.biometric.internal.BiometricResultFactory;

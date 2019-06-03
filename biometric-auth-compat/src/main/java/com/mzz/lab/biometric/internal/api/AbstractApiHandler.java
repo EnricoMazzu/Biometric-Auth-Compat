@@ -6,7 +6,7 @@ import android.os.CancellationSignal;
 import com.mzz.lab.biometric.BiometricCallback;
 import com.mzz.lab.biometric.internal.CancellationDelegate;
 import com.mzz.lab.biometric.internal.crypto.CryptoContext;
-import com.mzz.lab.biometric.internal.crypto.CryptoContextInitException;
+import com.mzz.lab.biometric.models.errors.CryptoContextInitException;
 import com.mzz.lab.biometric.models.AuthenticationPurpose;
 import com.mzz.lab.biometric.models.CryptoParams;
 

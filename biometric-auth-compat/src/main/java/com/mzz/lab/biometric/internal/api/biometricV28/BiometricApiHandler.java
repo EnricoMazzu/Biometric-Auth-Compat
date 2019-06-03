@@ -12,7 +12,7 @@ import com.mzz.lab.biometric.BiometricCallback;
 import com.mzz.lab.biometric.internal.BiometricCallbackV28;
 import com.mzz.lab.biometric.internal.api.AbstractApiHandler;
 import com.mzz.lab.biometric.internal.crypto.CryptoContext;
-import com.mzz.lab.biometric.internal.crypto.CryptoContextInitException;
+import com.mzz.lab.biometric.models.errors.CryptoContextInitException;
 
 public class BiometricApiHandler extends AbstractApiHandler {
 

@@ -1,6 +1,6 @@
 package com.mzz.lab.biometric;
 
-import com.mzz.lab.biometric.internal.crypto.CryptoContextInitException;
+import com.mzz.lab.biometric.models.errors.CryptoContextInitException;
 import com.mzz.lab.biometric.models.BiometricAuthenticationResult;
 
 public interface BiometricCallback {
