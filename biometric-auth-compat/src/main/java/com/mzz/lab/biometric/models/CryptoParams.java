@@ -17,6 +17,10 @@ public class CryptoParams {
         return deleteAfterInvalidation;
     }
 
+    public static Builder newBuilder(String keyName){
+        return new Builder(keyName);
+    }
+
     public static class Builder {
         private String keyName;
         private boolean deleteAfterInvalidation;

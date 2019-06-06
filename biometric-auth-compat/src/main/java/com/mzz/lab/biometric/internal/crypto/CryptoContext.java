@@ -38,8 +38,8 @@ public class CryptoContext{
             if(!isKeyPresent(keyName)){
                 generateKey(keyName);
             }
-            boolean invalidated = initCipher(keyName);
-            if(invalidated){
+            boolean valid = initCipher(keyName);
+            if(!valid){
                 if(cryptoParams.isDeleteAfterInvalidation()){
                     deleteKeyByAlias(keyName);
                 }

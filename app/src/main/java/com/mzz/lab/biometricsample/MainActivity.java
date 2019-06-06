@@ -8,6 +8,8 @@ import android.widget.TextView;
 
 import com.mzz.lab.biometric.BiometricCallback;
 import com.mzz.lab.biometric.BiometricManager;
+import com.mzz.lab.biometric.models.AuthenticationPurpose;
+import com.mzz.lab.biometric.models.CryptoParams;
 import com.mzz.lab.biometric.models.errors.CryptoContextInitException;
 import com.mzz.lab.biometric.models.BiometricAuthenticationResult;
 
@@ -35,11 +37,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void authenticate() {
+        /*BiometricManager manager = BiometricManager.newBuilder()
+                .setTitle("Verification")
+                .setSubtitle("")
+                .setDescription("Confirm your identity to pay")
+                .setNegativeButtonText("Cancel")
+                .build();*/
+
+        CryptoParams params = CryptoParams.newBuilder("MyKey")
+                .setDeleteAfterInvalidation(true)
+                .build();
+
+
         BiometricManager manager = BiometricManager.newBuilder()
                 .setTitle("Verification")
                 .setSubtitle("")
                 .setDescription("Confirm your identity to pay")
                 .setNegativeButtonText("Cancel")
+                .setCryptoParams(params)
+                .setAuthenticationPurpose(AuthenticationPurpose.ENC_DEC_DATA)
                 .build();
 
         txtStatus.setText("OnAuthenticationPending");
