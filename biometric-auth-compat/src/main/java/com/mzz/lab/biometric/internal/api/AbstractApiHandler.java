@@ -12,8 +12,6 @@ import com.mzz.lab.biometric.models.CryptoParams;
 
 public abstract class AbstractApiHandler {
 
-    //private static final String KEY_NAME = UUID.randomUUID().toString();
-
     protected String title;
     protected String subtitle;
     protected String description;
@@ -21,10 +19,6 @@ public abstract class AbstractApiHandler {
     protected AuthenticationPurpose authenticationPurpose = AuthenticationPurpose.NONE;
     protected CancellationDelegate cancellationDelegate;
     protected CryptoParams cryptoParams;
-
-    public AbstractApiHandler(){
-
-    }
 
     public String getTitle() {
         return title;
@@ -97,7 +91,7 @@ public abstract class AbstractApiHandler {
         if(authenticationPurpose == null || authenticationPurpose == AuthenticationPurpose.NONE){
             return null;
         }
-        return new CryptoContext(cryptoParams);
+        return new CryptoContext(cryptoParams,authenticationPurpose);
 
     }
 

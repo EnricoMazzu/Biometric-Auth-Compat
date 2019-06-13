@@ -6,6 +6,7 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 
+import com.mzz.lab.biometric.models.AuthenticationPurpose;
 import com.mzz.lab.biometric.models.CryptoParams;
 import com.mzz.lab.biometric.models.errors.CryptoContextInitException;
 
@@ -30,15 +31,14 @@ public class CryptoContext{
     private KeyStore keyStore;
     private KeyGenerator keyGenerator;
 
-
-    public CryptoContext(CryptoParams cryptoParams) throws CryptoContextInitException {
+    public CryptoContext(CryptoParams cryptoParams, AuthenticationPurpose authenticationPurpose) throws CryptoContextInitException {
         try {
             String keyName = cryptoParams.getKeyName();
             initKeystore();
             if(!isKeyPresent(keyName)){
                 generateKey(keyName);
             }
-            boolean valid = initCipher(keyName);
+            boolean valid = initCipher(keyName,authenticationPurpose);
             if(!valid){
                 if(cryptoParams.isDeleteAfterInvalidation()){
                     deleteKeyByAlias(keyName);
@@ -102,7 +102,7 @@ public class CryptoContext{
 
 
     @TargetApi(Build.VERSION_CODES.M)
-    private boolean initCipher(String keyName) throws CryptoContextInitException {
+    private boolean initCipher(String keyName, AuthenticationPurpose authenticationPurpose) throws CryptoContextInitException {
         try {
             cipher = Cipher.getInstance(
                     KeyProperties.KEY_ALGORITHM_AES + "/"
@@ -118,7 +118,7 @@ public class CryptoContext{
             keyStore.load(null);
             SecretKey key = (SecretKey) keyStore.getKey(keyName,
                     null);
-            cipher.init(Cipher.ENCRYPT_MODE, key);
+            cipher.init(getEncryptMode(authenticationPurpose), key);
             return true;
 
         } catch (KeyPermanentlyInvalidatedException e) {
@@ -129,6 +129,18 @@ public class CryptoContext{
                 | NoSuchAlgorithmException | InvalidKeyException e) {
 
             throw new CryptoContextInitException(CryptoContextInitException.INIT_CIPHER_EXCEPTION, e);
+        }
+    }
+
+    private int getEncryptMode(AuthenticationPurpose authenticationPurpose) {
+        switch (authenticationPurpose){
+            case ENCRYPT:
+                return Cipher.ENCRYPT_MODE;
+            case DECRYPT:
+                return Cipher.DECRYPT_MODE;
+            case NONE:
+            default:
+                throw new IllegalArgumentException("None purpose is invalid");
         }
     }
 }

@@ -13,6 +13,8 @@ import com.mzz.lab.biometric.models.CryptoParams;
 import com.mzz.lab.biometric.models.errors.CryptoContextInitException;
 import com.mzz.lab.biometric.models.BiometricAuthenticationResult;
 
+import javax.crypto.Cipher;
+
 public class MainActivity extends AppCompatActivity {
 
     private Button btnAuthenticate;
@@ -30,19 +32,13 @@ public class MainActivity extends AppCompatActivity {
         btnAuthenticate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                authenticate();
+                authenticate(AuthenticationPurpose.ENCRYPT);
             }
         });
         txtStatus = findViewById(R.id.txtStatus);
     }
 
-    private void authenticate() {
-        /*BiometricManager manager = BiometricManager.newBuilder()
-                .setTitle("Verification")
-                .setSubtitle("")
-                .setDescription("Confirm your identity to pay")
-                .setNegativeButtonText("Cancel")
-                .build();*/
+    private void authenticate(AuthenticationPurpose authenticationPurpose) {
 
         CryptoParams params = CryptoParams.newBuilder("MyKey")
                 .setDeleteAfterInvalidation(true)
@@ -55,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
                 .setDescription("Confirm your identity to pay")
                 .setNegativeButtonText("Cancel")
                 .setCryptoParams(params)
-                .setAuthenticationPurpose(AuthenticationPurpose.ENC_DEC_DATA)
+                .setAuthenticationPurpose()
                 .build();
 
         txtStatus.setText("OnAuthenticationPending");
@@ -99,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onAuthenticationSuccessful(BiometricAuthenticationResult authenticationResult) {
                 txtStatus.setText("onAuthenticationSuccessful");
+                Cipher cipher = authenticationResult.getCryptoEntity().getCipher();
             }
 
             @Override
@@ -112,6 +109,4 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-
 }

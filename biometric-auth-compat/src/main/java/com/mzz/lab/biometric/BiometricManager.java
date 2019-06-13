@@ -146,7 +146,7 @@ public class BiometricManager {
             if(negativeButtonText == null){
                 throw new IllegalArgumentException("Biometric Dialog negative button text cannot be null");
             }
-            if(authenticationPurpose == AuthenticationPurpose.ENC_DEC_DATA && cryptoParams == null){
+            if(authenticationPurpose != AuthenticationPurpose.NONE && cryptoParams == null){
                 throw new IllegalArgumentException("Biometric Dialog crypto params cannot be null when authentication purpose is ENC_DEC_DATA");
             }
         }
