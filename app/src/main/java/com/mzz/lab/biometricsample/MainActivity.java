@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
                 .setDescription("Confirm your identity to pay")
                 .setNegativeButtonText("Cancel")
                 .setCryptoParams(params)
-                .setAuthenticationPurpose()
+                .setAuthenticationPurpose(authenticationPurpose)
                 .build();
 
         txtStatus.setText("OnAuthenticationPending");
