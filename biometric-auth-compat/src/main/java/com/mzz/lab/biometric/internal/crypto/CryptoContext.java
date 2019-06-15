@@ -36,9 +36,9 @@ public class CryptoContext{
             String keyName = cryptoParams.getKeyName();
             initKeystore();
             if(!isKeyPresent(keyName)){
-                generateKey(keyName);
+                generateKey(cryptoParams);
             }
-            boolean valid = initCipher(keyName,authenticationPurpose);
+            boolean valid = initCipher(cryptoParams,authenticationPurpose);
             if(!valid){
                 if(cryptoParams.isDeleteAfterInvalidation()){
                     deleteKeyByAlias(keyName);
@@ -80,11 +80,11 @@ public class CryptoContext{
 
 
     @TargetApi(Build.VERSION_CODES.M)
-    private void generateKey(String keyName) throws CryptoContextInitException {
+    private void generateKey(CryptoParams cryptoParams) throws CryptoContextInitException {
         try {
             keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore");
             keyGenerator.init(new
-                    KeyGenParameterSpec.Builder(keyName, KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                    KeyGenParameterSpec.Builder(cryptoParams.getKeyName(), KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
                     .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
                     .setUserAuthenticationRequired(true)
                     .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
@@ -102,7 +102,7 @@ public class CryptoContext{
 
 
     @TargetApi(Build.VERSION_CODES.M)
-    private boolean initCipher(String keyName, AuthenticationPurpose authenticationPurpose) throws CryptoContextInitException {
+    private boolean initCipher(CryptoParams cryptoParams, AuthenticationPurpose authenticationPurpose) throws CryptoContextInitException {
         try {
             cipher = Cipher.getInstance(
                     KeyProperties.KEY_ALGORITHM_AES + "/"
@@ -116,9 +116,15 @@ public class CryptoContext{
 
         try {
             keyStore.load(null);
-            SecretKey key = (SecretKey) keyStore.getKey(keyName,
+            SecretKey key = (SecretKey) keyStore.getKey(cryptoParams.getKeyName(),
                     null);
-            cipher.init(getEncryptMode(authenticationPurpose), key);
+
+            if(authenticationPurpose == AuthenticationPurpose.DECRYPT){
+                cipher.init(getEncryptMode(authenticationPurpose), key, cryptoParams.getIvParameterSpec());
+            }else{
+                cipher.init(getEncryptMode(authenticationPurpose), key);
+            }
+
             return true;
 
         } catch (KeyPermanentlyInvalidatedException e) {
@@ -126,7 +132,7 @@ public class CryptoContext{
 
         } catch (KeyStoreException | CertificateException
                 | UnrecoverableKeyException | IOException
-                | NoSuchAlgorithmException | InvalidKeyException e) {
+                | NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException e) {
 
             throw new CryptoContextInitException(CryptoContextInitException.INIT_CIPHER_EXCEPTION, e);
         }
