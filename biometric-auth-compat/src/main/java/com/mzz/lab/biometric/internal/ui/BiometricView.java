@@ -3,6 +3,7 @@ package com.mzz.lab.biometric.internal.ui;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.view.View;
 import android.widget.Button;
@@ -10,6 +11,8 @@ import android.widget.TextView;
 
 import com.mzz.lab.biometric.R;
 import com.mzz.lab.biometric.internal.CancellationDelegate;
+
+import java.lang.ref.WeakReference;
 
 /**
  * TODO evaluate BottomSheetDialogFragment
@@ -20,6 +23,8 @@ public class BiometricView extends BottomSheetDialog implements View.OnClickList
 
     private Button btnCancel;
     private TextView itemTitle, itemDescription, /*itemSubtitle,*/ itemStatus;
+    private BottomSheetBehavior<View> bottomSheetBehavior;
+    private View bottomSheetView;
 
 
     public BiometricView(@NonNull Context context, final CancellationDelegate cancellationDelegate) {
@@ -27,10 +32,11 @@ public class BiometricView extends BottomSheetDialog implements View.OnClickList
         this.cancellationDelegate = cancellationDelegate;
         setDialogView();
         setOnDismissListener(new OnDismissWithCancellationImpl(cancellationDelegate));
+        setOnShowListener(new OnShowListenerImpl(bottomSheetView,bottomSheetBehavior));
     }
 
     private void setDialogView() {
-        View bottomSheetView = getLayoutInflater().inflate(R.layout.fingerprint_bottom_sheet, null);
+        bottomSheetView = getLayoutInflater().inflate(R.layout.fingerprint_bottom_sheet, null);
         setContentView(bottomSheetView);
 
         btnCancel = findViewById(R.id.btn_cancel);
@@ -40,6 +46,7 @@ public class BiometricView extends BottomSheetDialog implements View.OnClickList
         itemStatus = findViewById(R.id.item_status);
         itemDescription = findViewById(R.id.item_description);
 
+        bottomSheetBehavior = BottomSheetBehavior.from((View)bottomSheetView.getParent());
     }
 
     public void setTitle(String title) {
@@ -68,8 +75,6 @@ public class BiometricView extends BottomSheetDialog implements View.OnClickList
         cancellationDelegate.cancel();
     }
 
-
-
     private static class OnDismissWithCancellationImpl implements OnDismissListener{
         private CancellationDelegate<?> cancellationDelegate;
 
@@ -80,6 +85,24 @@ public class BiometricView extends BottomSheetDialog implements View.OnClickList
         @Override
         public void onDismiss(DialogInterface dialog) {
             cancellationDelegate.cancel();
+        }
+    }
+
+
+    private static class OnShowListenerImpl implements OnShowListener {
+
+        private BottomSheetBehavior<View> bottomSheetBehavior;
+        private WeakReference<View> bottomSheetViewRef;
+
+        OnShowListenerImpl(View bottomSheetView, BottomSheetBehavior<View> bottomSheetBehavior){
+            this.bottomSheetViewRef = new WeakReference<>(bottomSheetView);
+            this.bottomSheetBehavior = bottomSheetBehavior;
+        }
+
+        @Override
+        public void onShow(DialogInterface dialog) {
+            View bottomSheetView = bottomSheetViewRef.get();
+            bottomSheetBehavior.setPeekHeight(bottomSheetView.getHeight());
         }
     }
 }
