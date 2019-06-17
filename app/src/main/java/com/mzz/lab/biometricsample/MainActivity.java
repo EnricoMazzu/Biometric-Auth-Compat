@@ -71,11 +71,35 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
 
+    private void setStatusText(String message) {
+        txtStatus.setText(message);
     }
 
     private void showMessage(String msg) {
         Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
+    }
+
+
+    private CryptoParams getCryptoParams(AuthenticationPurpose authenticationPurpose) {
+        if(authenticationPurpose == null || authenticationPurpose == AuthenticationPurpose.NONE){
+            return null;
+        }
+
+        byte[] iv = null;
+
+        if(authenticationPurpose == AuthenticationPurpose.ENCRYPT){
+            clearPinData();
+            iv = generateIV();
+        }else if(authenticationPurpose == AuthenticationPurpose.DECRYPT){
+            iv = Base64.decode(encryptedSecretData.getBase64Iv(),Base64.NO_WRAP);
+        }
+
+        return CryptoParams.newBuilder(MY_KEY_ALIAS)
+                .setDeleteAfterInvalidation(true)
+                .setIv(iv)
+                .build();
     }
 
     private void authenticate(final AuthenticationPurpose authenticationPurpose) {
@@ -151,9 +175,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void setStatusText(String message) {
-        txtStatus.setText(message);
-    }
 
     private void applyCrypto(@NonNull AuthenticationPurpose authenticationPurpose, BiometricAuthenticationResult authenticationResult) {
         if(authenticationPurpose == AuthenticationPurpose.ENCRYPT){
@@ -191,7 +212,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     @NonNull
     private static String getBase64Data(@NonNull byte[] data) {
         return Base64.encodeToString(data,Base64.NO_WRAP);
@@ -200,26 +220,6 @@ public class MainActivity extends AppCompatActivity {
     @NonNull
     private static byte[] fromBase64(@NonNull String dataStr){
         return Base64.decode(dataStr,Base64.NO_WRAP);
-    }
-
-    private CryptoParams getCryptoParams(AuthenticationPurpose authenticationPurpose) {
-        if(authenticationPurpose == null || authenticationPurpose == AuthenticationPurpose.NONE){
-            return null;
-        }
-
-        byte[] iv = null;
-
-        if(authenticationPurpose == AuthenticationPurpose.ENCRYPT){
-            clearPinData();
-            iv = generateIV();
-        }else if(authenticationPurpose == AuthenticationPurpose.DECRYPT){
-            iv = Base64.decode(encryptedSecretData.getBase64Iv(),Base64.NO_WRAP);
-        }
-
-        return CryptoParams.newBuilder(MY_KEY_ALIAS)
-                    .setDeleteAfterInvalidation(true)
-                    .setIv(iv)
-                    .build();
     }
 
     private void clearPinData() {
