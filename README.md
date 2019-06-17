@@ -25,17 +25,16 @@ https://github.com/anitaa1990/Biometric-Auth-Sample.
 
 //TODO
 
-### Use Biometric Api
+### Create BiometricManager
 In order to use the Biometric authentication api, you need a BiometricManager instance.
 To create it, use a newBuilder() methods to get a builder, configure your needs and call build() to build
 a new manager instance.
-
-
 
 ```Java
 
 private void authenticate(final AuthenticationPurpose authenticationPurpose) {
 
+    // params value is mandatory only if authenticationPurpose != AuthenticationPurpose.NONE
     CryptoParams params = getCryptoParams(authenticationPurpose);
 
 
@@ -50,7 +49,42 @@ private void authenticate(final AuthenticationPurpose authenticationPurpose) {
 
     setStatusText("OnAuthenticationPending");
 
-    manager.authenticate(this,new BiometricCallback() {
+    startAuthenticationWithManager(authenticationPurpose, manager);
+}
+
+
+private CryptoParams getCryptoParams(AuthenticationPurpose authenticationPurpose) {
+    if(authenticationPurpose == null || authenticationPurpose == AuthenticationPurpose.NONE){
+        return null;
+    }
+
+    byte[] iv = null;
+
+    if(authenticationPurpose == AuthenticationPurpose.ENCRYPT){
+        // clear current encrypted data
+        clearPinData();
+        // generate a random secure iv
+        iv = generateIV();
+    }else if(authenticationPurpose == AuthenticationPurpose.DECRYPT){
+        // encryptedSecretData is a simple wrapper class that contains encrypted data (base64 encoded)
+        // and iv data(base64 encoded)
+        iv = Base64.decode(encryptedSecretData.getBase64Iv(),Base64.NO_WRAP);
+    }
+
+    return CryptoParams.newBuilder(MY_KEY_ALIAS)
+            .setDeleteAfterInvalidation(true)
+            .setIv(iv)
+            .build();
+}
+
+```
+
+### Authenticate User
+
+```Java
+private void startAuthenticationWithManager(final AuthenticationPurpose authenticationPurpose, BiometricManager manager) {
+    // authenticate the user with the configured manager
+    manager.authenticate(this, new BiometricCallback() {
         @Override
         public void onSdkVersionNotSupported() {
             setStatusText("onSdkVersionNotSupported");
@@ -108,12 +142,75 @@ private void authenticate(final AuthenticationPurpose authenticationPurpose) {
 }
 
 ```
+### Use Crypto Entity
+
+In the following sample you can see how to use authentication result with JCA Apis
+
+```Java
+
+private void applyCrypto(@NonNull AuthenticationPurpose authenticationPurpose, BiometricAuthenticationResult authenticationResult) {
+    if(authenticationPurpose == AuthenticationPurpose.ENCRYPT){
+        encryptPin(authenticationResult);
+    }else{
+        decryptPin(encryptedSecretData,authenticationResult);
+    }
+}
+
+private void encryptPin(BiometricAuthenticationResult authenticationResult) {
+    try {
+        String secret = "this is my secret pin";
+        Cipher cipher = authenticationResult.getCryptoEntity().getCipher();
+        byte[] encryptedData = cipher.doFinal(secret.getBytes());
+        encryptedSecretData = new EncryptedData(getBase64Data(encryptedData),getBase64Data(cipher.getIV()));
+        setStatusText("Encrypt Success");
+    }catch (Exception ex){
+        Log.e(LOG_TAG,"[ENC_PIN] encryptPin fail: " + ex.getMessage(),ex);
+        setStatusText("Encrypt Fail");
+    }
+}
 
 
+private String decryptPin(@NonNull EncryptedData encryptedPinData, @NonNull BiometricAuthenticationResult authenticationResult) {
+    try {
+        String data = encryptedPinData.getBase64Data();
+        Cipher cipher = authenticationResult.getCryptoEntity().getCipher();
+        byte[] decryptedData = cipher.doFinal(fromBase64(data));
+        setStatusText("Decrypt Success");
+        return new String(decryptedData);
+    }catch (Exception ex){
+        Log.e(LOG_TAG,"[ENC_PIN] encryptPin fail: " + ex.getMessage(),ex);
+        setStatusText("Decrypt Fail");
+        return null;
+    }
+}
 
-## API
-work in progress
+@NonNull
+private static String getBase64Data(@NonNull byte[] data) {
+    return Base64.encodeToString(data,Base64.NO_WRAP);
+}
 
+@NonNull
+private static byte[] fromBase64(@NonNull String dataStr){
+    return Base64.decode(dataStr, Base64.NO_WRAP);
+}
+
+private void clearPinData() {
+    encryptedSecretData = null;
+}
+
+private byte[] generateIV() {
+    Random random = new SecureRandom();
+    byte[] iv = new byte[16];
+    random.nextBytes(iv);
+    return iv;
+}
+
+```
+
+
+## Models and APIs
+
+WIP
 
 ## Roadmap
 This is a work in progress

@@ -90,9 +90,13 @@ public class MainActivity extends AppCompatActivity {
         byte[] iv = null;
 
         if(authenticationPurpose == AuthenticationPurpose.ENCRYPT){
+            // clear current encrypted data
             clearPinData();
+            // generate a random secure iv
             iv = generateIV();
         }else if(authenticationPurpose == AuthenticationPurpose.DECRYPT){
+            // encryptedSecretData is a simple wrapper class that contains encrypted data (base64 encoded)
+            // and iv data(base64 encoded)
             iv = Base64.decode(encryptedSecretData.getBase64Iv(),Base64.NO_WRAP);
         }
 
@@ -104,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void authenticate(final AuthenticationPurpose authenticationPurpose) {
 
+        // params value is mandatory only if authenticationPurpose != AuthenticationPurpose.NONE
         CryptoParams params = getCryptoParams(authenticationPurpose);
 
 
@@ -118,6 +123,10 @@ public class MainActivity extends AppCompatActivity {
 
         setStatusText("OnAuthenticationPending");
 
+        startAuthenticationWithManager(authenticationPurpose, manager);
+    }
+
+    private void startAuthenticationWithManager(final AuthenticationPurpose authenticationPurpose, BiometricManager manager) {
         manager.authenticate(this,new BiometricCallback() {
             @Override
             public void onSdkVersionNotSupported() {
@@ -206,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
             setStatusText("Decrypt Success");
             return new String(decryptedData);
         }catch (Exception ex){
-            Log.e(LOG_TAG,"[ENC_PIN]e ncryptPin fail: " + ex.getMessage(),ex);
+            Log.e(LOG_TAG,"[ENC_PIN] encryptPin fail: " + ex.getMessage(),ex);
             setStatusText("Decrypt Fail");
             return null;
         }
