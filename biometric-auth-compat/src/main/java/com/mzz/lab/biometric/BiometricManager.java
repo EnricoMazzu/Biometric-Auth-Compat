@@ -22,6 +22,11 @@ public class BiometricManager {
     }
 
 
+    /**
+     * Start the authentication flow.
+     * @param context the android context (N.B: this should be a valid ui context
+     * @param biometricCallback the callback used as a listener
+     */
     public void authenticate(Context context,@NonNull final BiometricCallback biometricCallback) {
         if(!BiometricUtils.isSdkVersionSupported()) {
             biometricCallback.onSdkVersionNotSupported();
@@ -48,6 +53,9 @@ public class BiometricManager {
 
     }
 
+    /**
+     * Cancel the pending authentication
+     */
     public void cancelAuthentication(){
         if(apiHandler != null){
             apiHandler.cancelAuthentication();
@@ -103,37 +111,72 @@ public class BiometricManager {
 
         }
 
+        /**
+         * Set the title of the sheet dialog
+         * @param title the title
+         * @return the builder
+         */
         public BiometricBuilder setTitle(@NonNull final String title) {
             this.title = title;
             return this;
         }
 
+        /**
+         * Set the subtitle of the sheet dialog
+         * @param subtitle the subtitle
+         * @return the builder
+         */
         public BiometricBuilder setSubtitle(@NonNull final String subtitle) {
             this.subtitle = subtitle;
             return this;
         }
 
+        /**
+         * Set a description message
+         * @param description the description
+         * @return the builder
+         */
         public BiometricBuilder setDescription(@NonNull final String description) {
             this.description = description;
             return this;
         }
 
 
+        /**
+         * Set the negative button text
+         * @param negativeButtonText the button text
+         * @return the builder
+         */
         public BiometricBuilder setNegativeButtonText(@NonNull final String negativeButtonText) {
             this.negativeButtonText = negativeButtonText;
             return this;
         }
 
+        /**
+         * Set the authentication purpose. This parameter depending on your needs
+         * @param authenticationPurpose
+         * @return the builder
+         */
         public BiometricBuilder setAuthenticationPurpose(@NonNull AuthenticationPurpose authenticationPurpose) {
             this.authenticationPurpose = authenticationPurpose;
             return this;
         }
 
+        /**
+         * Set the crypto params to use inside the crypto layer
+         * @param cryptoParams the crypto params
+         * @return the builder
+         */
         public BiometricBuilder setCryptoParams(CryptoParams cryptoParams) {
             this.cryptoParams = cryptoParams;
             return this;
         }
 
+        /**
+         * Build a new {@link BiometricManager} instance
+         * @return the new instance
+         * @throws IllegalArgumentException if invalid arguments will be detected
+         */
         public BiometricManager build() throws IllegalArgumentException {
             checkParameters();
             return new BiometricManager(this);
