@@ -144,7 +144,7 @@ private void startAuthenticationWithManager(final AuthenticationPurpose authenti
 ```
 ### Use Crypto Entity
 
-In the following sample you can see how to use authentication result with JCA Apis
+In the following sample you can see how to use authentication result with JCA
 
 ```Java
 
@@ -210,7 +210,8 @@ private byte[] generateIV() {
 
 ## Models and APIs
 
-WIP
+
+
 
 ## Roadmap
 This is a work in progress

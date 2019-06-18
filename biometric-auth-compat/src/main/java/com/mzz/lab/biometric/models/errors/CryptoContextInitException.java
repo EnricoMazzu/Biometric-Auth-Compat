@@ -1,5 +1,8 @@
 package com.mzz.lab.biometric.models.errors;
 
+/**
+ * Represent a failure during the internal crypto init flow
+ */
 public class CryptoContextInitException extends Exception {
 
     public static final int GENERIC_KEYSTORE_EXCEPTION = 0;
@@ -12,16 +15,30 @@ public class CryptoContextInitException extends Exception {
         this(GENERIC_KEYSTORE_EXCEPTION,cause);
     }
 
+    /**
+     * Constructor
+     * @param errorCode the error code
+     * @param cause the underlying exception
+     */
     public CryptoContextInitException(int errorCode, Throwable cause) {
         super(cause);
         this.errorCode = errorCode;
     }
 
+    /**
+     * Constructor
+     * @param errorCode the error code
+     * @param message the exception message
+     */
     public CryptoContextInitException(int errorCode, String message) {
         super(message);
         this.errorCode = errorCode;
     }
 
+    /**
+     * Return the error code the explain better the source of the error
+     * @return
+     */
     public int getErrorCode() {
         return errorCode;
     }

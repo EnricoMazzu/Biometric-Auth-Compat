@@ -9,6 +9,9 @@ import com.mzz.lab.biometric.internal.api.fingerprint.FingerprintCompatApiHandle
 import com.mzz.lab.biometric.models.AuthenticationPurpose;
 import com.mzz.lab.biometric.models.CryptoParams;
 
+/**
+ * This class manage the authentication flow.
+ */
 public class BiometricManager {
 
     private final BiometricBuilder biometricBuilder;
@@ -84,6 +87,9 @@ public class BiometricManager {
         return new BiometricBuilder();
     }
 
+    /**
+     * Builder class
+     */
     public static class BiometricBuilder {
 
         private String title;

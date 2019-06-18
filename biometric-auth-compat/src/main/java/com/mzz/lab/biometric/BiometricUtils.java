@@ -10,6 +10,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 
 
+/**
+ * Utils for biometric conditions management
+ */
 public class BiometricUtils {
 
     /**
