@@ -4,12 +4,12 @@ android {
     compileSdkVersion 28
 
 
-
+    println("VersionCode: " + LIBRARY_VERSION_CODE + "; VersionName: " + LIBRARY_VERSION_NAME)
     defaultConfig {
         minSdkVersion 22
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode LIBRARY_VERSION_CODE
+        versionName LIBRARY_VERSION_NAME
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
