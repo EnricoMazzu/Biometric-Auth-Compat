@@ -18,7 +18,7 @@ N.B: We don't want to replace Google work, but we want only help developers to h
 
 References:
 UI and callback originally inspired by
-https://github.com/anitaa1990/Biometric-Auth-Sample.
+https://github.com/anitaa1990/Biometric-Auth-Sample , but with review and a complete re-design (in terms of api)
 
 ## Getting started
 ### Add repo and dependencies
