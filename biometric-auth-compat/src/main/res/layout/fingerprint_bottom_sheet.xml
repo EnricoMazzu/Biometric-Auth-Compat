@@ -26,8 +26,8 @@
 
     <ImageView
         android:id="@+id/img_fingerprint"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_below="@id/item_description"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="8dp"
