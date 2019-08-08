@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         CryptoParams params = getCryptoParams(authenticationPurpose);
 
 
-        BiometricAuthenticator manager = BiometricAuthenticator.newBuilder()
+        BiometricAuthenticator authenticator = BiometricAuthenticator.newBuilder()
                 .setTitle("Verification")
                 .setSubtitle("")
                 .setDescription("Confirm your identity to pay")
@@ -123,11 +123,11 @@ public class MainActivity extends AppCompatActivity {
 
         setStatusText("OnAuthenticationPending");
 
-        startAuthenticationWithManager(authenticationPurpose, manager);
+        startAuthentication(authenticationPurpose, authenticator);
     }
 
-    private void startAuthenticationWithManager(final AuthenticationPurpose authenticationPurpose, BiometricAuthenticator manager) {
-        manager.authenticate(this,new AuthenticationCallback() {
+    private void startAuthentication(final AuthenticationPurpose authenticationPurpose, BiometricAuthenticator authenticator) {
+        authenticator.authenticate(this,new AuthenticationCallback() {
             @Override
             public void onSdkVersionNotSupported() {
                 setStatusText("onSdkVersionNotSupported");

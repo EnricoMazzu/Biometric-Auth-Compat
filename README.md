@@ -25,7 +25,7 @@ https://github.com/anitaa1990/Biometric-Auth-Sample.
 
 //TODO
 
-### Create BiometricManager
+### Create BiometricAuthenticator
 In order to use the Biometric authentication api, you need a BiometricManager instance.
 To create it, use a newBuilder() methods to get a builder, configure your needs and call build() to build
 a new manager instance.
@@ -38,7 +38,7 @@ private void authenticate(final AuthenticationPurpose authenticationPurpose) {
     CryptoParams params = getCryptoParams(authenticationPurpose);
 
 
-    BiometricManager manager = BiometricManager.newBuilder()
+    BiometricAuthenticator authenticator = BiometricAuthenticator.newBuilder()
             .setTitle("Verification")
             .setSubtitle("")
             .setDescription("Confirm your identity to pay")
@@ -49,7 +49,7 @@ private void authenticate(final AuthenticationPurpose authenticationPurpose) {
 
     setStatusText("OnAuthenticationPending");
 
-    startAuthenticationWithManager(authenticationPurpose, manager);
+    startAuthentication(authenticationPurpose, manager);
 }
 
 
@@ -82,9 +82,9 @@ private CryptoParams getCryptoParams(AuthenticationPurpose authenticationPurpose
 ### Authenticate User
 
 ```Java
-private void startAuthenticationWithManager(final AuthenticationPurpose authenticationPurpose, BiometricManager manager) {
+private void startAuthentication(final AuthenticationPurpose authenticationPurpose, BiometricAuthenticator authenticator) {
     // authenticate the user with the configured manager
-    manager.authenticate(this, new BiometricCallback() {
+    authenticator.authenticate(this, new AuthenticationCallback() {
         @Override
         public void onSdkVersionNotSupported() {
             setStatusText("onSdkVersionNotSupported");
@@ -207,13 +207,7 @@ private byte[] generateIV() {
 
 ```
 
-
-## Models and APIs
-
-
-
-
-## Roadmap
+## Project Roadmap
 This is a work in progress
 ### milestone 0 (wip)
  - Define dialog view for api from 23 to 27 (with legacy compat library)
