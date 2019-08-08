@@ -22,6 +22,12 @@ References:
 UI and callback originally inspired by
 https://github.com/anitaa1990/Biometric-Auth-Sample , but with review and a complete re-design (in terms of api)
 
+
+| Api level 23 | Api level 26 | Api Level 28 (biometricPrompt) |
+|--------------|--------------|--------------------------------|
+|     ![alt text](https://raw.githubusercontent.com/EnricoMazzu/Biometric-Auth-Compat/develop/images/api_level_23.png)         | ![alt text](https://raw.githubusercontent.com/EnricoMazzu/Biometric-Auth-Compat/develop/images/api_level_26.png)             |    ![alt text](https://raw.githubusercontent.com/EnricoMazzu/Biometric-Auth-Compat/develop/images/api_level_28.png) |
+
+
 ## Getting started
 ### Add repo and dependencies
 
