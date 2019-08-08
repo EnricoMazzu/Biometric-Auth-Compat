@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 import android.support.v4.os.CancellationSignal;
 
-import com.mzz.lab.biometric.BiometricCallback;
+import com.mzz.lab.biometric.AuthenticationCallback;
 import com.mzz.lab.biometric.internal.BiometricResultFactory;
 import com.mzz.lab.biometric.internal.CancellationDelegate;
 import com.mzz.lab.biometric.internal.crypto.CryptoContext;
@@ -17,11 +17,11 @@ import java.lang.ref.WeakReference;
 public class FingerprintCompatApiHandler extends FingerprintApiHandler {
 
     @Override
-    protected void startAuthentication(Context context, BiometricCallback biometricCallback) throws CryptoContextInitException {
+    protected void startAuthentication(Context context, AuthenticationCallback authenticationCallback) throws CryptoContextInitException {
         if(useCompat()){
-            setupWithCompat(context,biometricCallback);
+            setupWithCompat(context, authenticationCallback);
         }else{
-            super.startAuthentication(context,biometricCallback);
+            super.startAuthentication(context, authenticationCallback);
         }
     }
 
@@ -31,7 +31,7 @@ public class FingerprintCompatApiHandler extends FingerprintApiHandler {
     }
 
 
-    private void setupWithCompat(Context context, final BiometricCallback biometricCallback) throws CryptoContextInitException {
+    private void setupWithCompat(Context context, final AuthenticationCallback authenticationCallback) throws CryptoContextInitException {
         cancellationDelegate = new CancellationDelegateCompat();
         CryptoContext cryptoContext = getCryptoContext();
         FingerprintManagerCompat.CryptoObject cryptoObject = toCryptoObject(cryptoContext);
@@ -44,19 +44,19 @@ public class FingerprintCompatApiHandler extends FingerprintApiHandler {
                     @Override
                     public void onAuthenticationError(int errMsgId, CharSequence errString) {
                         super.onAuthenticationError(errMsgId, errString);
-                        handleOnAuthenticationError(errMsgId,errString,biometricCallback);
+                        handleOnAuthenticationError(errMsgId,errString, authenticationCallback);
                     }
 
                     @Override
                     public void onAuthenticationHelp(int helpMsgId, CharSequence helpString) {
                         super.onAuthenticationHelp(helpMsgId, helpString);
-                        handleOnAuthenticationHelp(helpMsgId,helpString,biometricCallback);
+                        handleOnAuthenticationHelp(helpMsgId,helpString, authenticationCallback);
                     }
 
                     @Override
                     public void onAuthenticationSucceeded(FingerprintManagerCompat.AuthenticationResult result) {
                         super.onAuthenticationSucceeded(result);
-                        handleOnAuthenticationSucceeded(BiometricResultFactory.from(result), biometricCallback);
+                        handleOnAuthenticationSucceeded(BiometricResultFactory.from(result), authenticationCallback);
                     }
 
 
@@ -64,7 +64,7 @@ public class FingerprintCompatApiHandler extends FingerprintApiHandler {
                     public void onAuthenticationFailed() {
                         super.onAuthenticationFailed();
                         Context context = contextWeakReference.get();
-                        handleOnAuthenticationFailed(context,biometricCallback);
+                        handleOnAuthenticationFailed(context, authenticationCallback);
                     }
                 }, null);
 

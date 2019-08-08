@@ -10,8 +10,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.mzz.lab.biometric.BiometricCallback;
-import com.mzz.lab.biometric.BiometricManager;
+import com.mzz.lab.biometric.AuthenticationCallback;
+import com.mzz.lab.biometric.BiometricAuthenticator;
 import com.mzz.lab.biometric.models.AuthenticationPurpose;
 import com.mzz.lab.biometric.models.CryptoParams;
 import com.mzz.lab.biometric.models.errors.CryptoContextInitException;
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         CryptoParams params = getCryptoParams(authenticationPurpose);
 
 
-        BiometricManager manager = BiometricManager.newBuilder()
+        BiometricAuthenticator manager = BiometricAuthenticator.newBuilder()
                 .setTitle("Verification")
                 .setSubtitle("")
                 .setDescription("Confirm your identity to pay")
@@ -126,8 +126,8 @@ public class MainActivity extends AppCompatActivity {
         startAuthenticationWithManager(authenticationPurpose, manager);
     }
 
-    private void startAuthenticationWithManager(final AuthenticationPurpose authenticationPurpose, BiometricManager manager) {
-        manager.authenticate(this,new BiometricCallback() {
+    private void startAuthenticationWithManager(final AuthenticationPurpose authenticationPurpose, BiometricAuthenticator manager) {
+        manager.authenticate(this,new AuthenticationCallback() {
             @Override
             public void onSdkVersionNotSupported() {
                 setStatusText("onSdkVersionNotSupported");

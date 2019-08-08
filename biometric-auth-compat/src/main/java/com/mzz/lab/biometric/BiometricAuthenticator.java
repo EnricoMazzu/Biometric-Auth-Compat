@@ -12,12 +12,12 @@ import com.mzz.lab.biometric.models.CryptoParams;
 /**
  * This class manage the authentication flow.
  */
-public class BiometricManager {
+public class BiometricAuthenticator {
 
-    private final BiometricBuilder biometricBuilder;
+    private final Builder biometricBuilder;
     private AbstractApiHandler apiHandler;
 
-    protected BiometricManager(final BiometricBuilder biometricBuilder) {
+    protected BiometricAuthenticator(final Builder biometricBuilder) {
         this.biometricBuilder = biometricBuilder;
     }
 
@@ -25,31 +25,31 @@ public class BiometricManager {
     /**
      * Start the authentication flow.
      * @param context the android context (N.B: this should be a valid ui context
-     * @param biometricCallback the callback used as a listener
+     * @param authenticationCallback the callback used as a listener
      */
-    public void authenticate(Context context,@NonNull final BiometricCallback biometricCallback) {
+    public void authenticate(Context context,@NonNull final AuthenticationCallback authenticationCallback) {
         if(!BiometricUtils.isSdkVersionSupported()) {
-            biometricCallback.onSdkVersionNotSupported();
+            authenticationCallback.onSdkVersionNotSupported();
             return;
         }
 
         if(!BiometricUtils.isPermissionGranted(context)) {
-            biometricCallback.onBiometricAuthenticationPermissionNotGranted();
+            authenticationCallback.onBiometricAuthenticationPermissionNotGranted();
             return;
         }
 
         if(!BiometricUtils.isHardwareSupported(context)) {
-            biometricCallback.onBiometricAuthenticationNotSupported();
+            authenticationCallback.onBiometricAuthenticationNotSupported();
             return;
         }
 
         if(!BiometricUtils.hasEnrolledFingerprints(context)) {
-            biometricCallback.onBiometricAuthenticationNotAvailable();
+            authenticationCallback.onBiometricAuthenticationNotAvailable();
             return;
         }
 
         //displayBiometricDialog(biometricCallback);
-        authenticateWithApiHandler(context,biometricCallback);
+        authenticateWithApiHandler(context, authenticationCallback);
 
     }
 
@@ -64,9 +64,9 @@ public class BiometricManager {
 
 
 
-    private void authenticateWithApiHandler(Context context,BiometricCallback biometricCallback) {
+    private void authenticateWithApiHandler(Context context, AuthenticationCallback authenticationCallback) {
         this.apiHandler = createAndSetupApiHandler();
-        this.apiHandler.authenticate(context,biometricCallback);
+        this.apiHandler.authenticate(context, authenticationCallback);
     }
 
     private AbstractApiHandler createAndSetupApiHandler() {
@@ -81,7 +81,7 @@ public class BiometricManager {
         return abstractApiHandler;
     }
 
-    private void setupApiHandler(AbstractApiHandler abstractApiHandler, BiometricBuilder biometricBuilder) {
+    private void setupApiHandler(AbstractApiHandler abstractApiHandler, Builder biometricBuilder) {
         abstractApiHandler.setTitle(biometricBuilder.title);
         abstractApiHandler.setSubtitle(biometricBuilder.subtitle);
         abstractApiHandler.setDescription(biometricBuilder.description);
@@ -91,14 +91,14 @@ public class BiometricManager {
     }
 
 
-    public static BiometricBuilder newBuilder(){
-        return new BiometricBuilder();
+    public static Builder newBuilder(){
+        return new Builder();
     }
 
     /**
      * Builder class
      */
-    public static class BiometricBuilder {
+    public static class Builder {
 
         private String title;
         private String subtitle;
@@ -107,7 +107,7 @@ public class BiometricManager {
         private AuthenticationPurpose authenticationPurpose;
         private CryptoParams cryptoParams;
 
-        private BiometricBuilder() {
+        private Builder() {
 
         }
 
@@ -116,7 +116,7 @@ public class BiometricManager {
          * @param title the title
          * @return the builder
          */
-        public BiometricBuilder setTitle(@NonNull final String title) {
+        public Builder setTitle(@NonNull final String title) {
             this.title = title;
             return this;
         }
@@ -126,7 +126,7 @@ public class BiometricManager {
          * @param subtitle the subtitle
          * @return the builder
          */
-        public BiometricBuilder setSubtitle(@NonNull final String subtitle) {
+        public Builder setSubtitle(@NonNull final String subtitle) {
             this.subtitle = subtitle;
             return this;
         }
@@ -136,7 +136,7 @@ public class BiometricManager {
          * @param description the description
          * @return the builder
          */
-        public BiometricBuilder setDescription(@NonNull final String description) {
+        public Builder setDescription(@NonNull final String description) {
             this.description = description;
             return this;
         }
@@ -147,7 +147,7 @@ public class BiometricManager {
          * @param negativeButtonText the button text
          * @return the builder
          */
-        public BiometricBuilder setNegativeButtonText(@NonNull final String negativeButtonText) {
+        public Builder setNegativeButtonText(@NonNull final String negativeButtonText) {
             this.negativeButtonText = negativeButtonText;
             return this;
         }
@@ -157,7 +157,7 @@ public class BiometricManager {
          * @param authenticationPurpose
          * @return the builder
          */
-        public BiometricBuilder setAuthenticationPurpose(@NonNull AuthenticationPurpose authenticationPurpose) {
+        public Builder setAuthenticationPurpose(@NonNull AuthenticationPurpose authenticationPurpose) {
             this.authenticationPurpose = authenticationPurpose;
             return this;
         }
@@ -167,19 +167,18 @@ public class BiometricManager {
          * @param cryptoParams the crypto params
          * @return the builder
          */
-        public BiometricBuilder setCryptoParams(CryptoParams cryptoParams) {
+        public Builder setCryptoParams(CryptoParams cryptoParams) {
             this.cryptoParams = cryptoParams;
             return this;
         }
 
         /**
-         * Build a new {@link BiometricManager} instance
+         * Build a new {@link BiometricAuthenticator} instance
          * @return the new instance
-         * @throws IllegalArgumentException if invalid arguments will be detected
          */
-        public BiometricManager build() throws IllegalArgumentException {
+        public BiometricAuthenticator build() throws IllegalArgumentException {
             checkParameters();
-            return new BiometricManager(this);
+            return new BiometricAuthenticator(this);
         }
 
         private void checkParameters() throws IllegalArgumentException{

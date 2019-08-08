@@ -3,7 +3,7 @@ package com.mzz.lab.biometric.internal.api;
 import android.content.Context;
 import android.os.CancellationSignal;
 
-import com.mzz.lab.biometric.BiometricCallback;
+import com.mzz.lab.biometric.AuthenticationCallback;
 import com.mzz.lab.biometric.internal.CancellationDelegate;
 import com.mzz.lab.biometric.internal.crypto.CryptoContext;
 import com.mzz.lab.biometric.models.errors.CryptoContextInitException;
@@ -75,14 +75,14 @@ public abstract class AbstractApiHandler {
     }
 
 
-    protected abstract void startAuthentication(Context context, BiometricCallback biometricCallback) throws CryptoContextInitException;
+    protected abstract void startAuthentication(Context context, AuthenticationCallback authenticationCallback) throws CryptoContextInitException;
 
 
-    public void authenticate(Context context,BiometricCallback biometricCallback){
+    public void authenticate(Context context, AuthenticationCallback authenticationCallback){
         try {
-            startAuthentication(context,biometricCallback);
+            startAuthentication(context, authenticationCallback);
         } catch (CryptoContextInitException e) {
-            biometricCallback.onBiometricAuthenticationInternalError(e);
+            authenticationCallback.onBiometricAuthenticationInternalError(e);
         }
     }
 

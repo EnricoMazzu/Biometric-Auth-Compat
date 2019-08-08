@@ -15,6 +15,8 @@ import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
  */
 public class BiometricUtils {
 
+    private BiometricUtils(){}
+
     /**
      * Check if system biometric prompt is enabled
      * @return true if available, false otherwise
@@ -69,8 +71,8 @@ public class BiometricUtils {
 
 
     /**
-     *
-     * @param context
+     * Check if fingerprint permission has been granted
+     * @param context the android context
      * @return
      */
     @TargetApi(Build.VERSION_CODES.M)

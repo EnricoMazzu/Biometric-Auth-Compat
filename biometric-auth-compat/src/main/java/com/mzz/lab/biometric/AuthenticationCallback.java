@@ -6,9 +6,9 @@ import com.mzz.lab.biometric.models.errors.CryptoContextInitException;
 import com.mzz.lab.biometric.models.BiometricAuthenticationResult;
 
 /**
- * Callback interface used in {@link BiometricManager#authenticate(Context, BiometricCallback)}
+ * Callback interface used in {@link BiometricAuthenticator#authenticate(Context, AuthenticationCallback)}
  */
-public interface BiometricCallback {
+public interface AuthenticationCallback {
     /**
      * Called if sdk version not support biometric authentication
      */
