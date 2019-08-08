@@ -207,6 +207,15 @@ private byte[] generateIV() {
 
 ```
 
+### BiometricUtil (support APIs)
+- isBiometricPromptEnabled(): Check if system biometric prompt is enabled
+- isSdkVersionSupported() :  Check if current api level supports biometric api
+- isHardwareSupported(...): Check hardware support
+- hasEnrolledFingerprints(...): Check if almost a fingerprint is available
+- isPermissionGranted(...): Check if fingerprint permission has been granted (static manifest permission)
+
+
+
 ## Project Roadmap
 This is a work in progress
 ### milestone 0 (wip)

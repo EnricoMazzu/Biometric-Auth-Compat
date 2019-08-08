@@ -26,7 +26,7 @@ public class BiometricUtils {
     }
 
     /**
-     *
+     * Check if current api level support biometric api
      * @return
      */
     public static boolean isSdkVersionSupported() {
